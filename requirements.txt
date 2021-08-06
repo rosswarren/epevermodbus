@@ -1,0 +1,1 @@
+MinimalModbus==1.0.2
