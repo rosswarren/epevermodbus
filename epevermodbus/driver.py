@@ -25,6 +25,10 @@ class EpeverChargeController( minimalmodbus.Instrument ):
     def retriable_read_register(self, registeraddress, number_of_decimals, functioncode):
         return self.read_register(registeraddress, number_of_decimals, functioncode, False)
 
+    @retry(wait_fixed=200, stop_max_attempt_number=5)
+    def retriable_read_bit(self, registeraddress, functioncode):
+        return self.read_bit(registeraddress, functioncode)
+
     def get_solar_voltage(self):
         """PV array input in volts"""
         return self.retriable_read_register(0x3100, 2, 4)
@@ -85,6 +89,10 @@ class EpeverChargeController( minimalmodbus.Instrument ):
         """Charging equipment status"""
         return self.retriable_read_register(0x3202, 2, 4)
 
+    def get_day_night(self):
+        """Day / Night"""
+        return "NIGHT" if self.retriable_read_bit(0x200C, 2) == 1 else "DAY"
+
 
 if __name__ == "__main__":
     controller = EpeverChargeController("/dev/ttyUSB1", 1)
@@ -103,4 +111,5 @@ if __name__ == "__main__":
     print('Battery status: ', controller.get_battery_status())
     print('Charging equipment status: ', controller.get_charging_equipment_status())
     print('Discharging equipment status: ', controller.get_discharging_equipment_status())
+    print('Day or night', controller.get_day_night())
 
