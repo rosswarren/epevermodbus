@@ -25,7 +25,6 @@ def main():
     print("Load power:", controller.get_load_power())
     print("Load power L:", controller.get_load_power_l())
     print("Load power H:", controller.get_load_power_h())
-    print("Battery capacity:", controller.get_battery_capacity())
     print("Battery current L:", controller.get_battery_current_l())
     print("Battery current H:", controller.get_battery_current_h())
     print("Battery voltage:", controller.get_battery_voltage())
@@ -52,7 +51,10 @@ def main():
     print("Rated charging current:", controller.get_rated_charging_current())
     print("Rated load current:", controller.get_rated_load_current())
     print("Battery real rated voltage:", controller.get_battery_real_rated_voltage())
-
+    print("Battery type:", controller.get_battery_type())
+    print("Battery capacity:", controller.get_battery_capacity())
+    print("Temperature compensation coefficient:", controller.get_temperature_compensation_coefficient())
+    print("Over voltage disconnect:", controller.get_over_voltage_disconnect())
 
 if __name__ == "__main__":
     main()

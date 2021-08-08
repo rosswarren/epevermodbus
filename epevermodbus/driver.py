@@ -81,10 +81,6 @@ class EpeverChargeController(minimalmodbus.Instrument):
         """Load power H"""
         return self.retriable_read_register(0x310F, 2, 4)
 
-    def get_battery_capacity(self):
-        """Battery capacity in amp hours"""
-        return self.retriable_read_register(0x9001, 0, 3)
-
     def get_battery_current_l(self):
         """Battery current L"""
         return self.retriable_read_register(0x331B, 2, 4)
@@ -265,3 +261,26 @@ class EpeverChargeController(minimalmodbus.Instrument):
     def get_battery_real_rated_voltage(self):
         """Battery real rated voltage"""
         return self.retriable_read_register(0x311D, 2, 4)
+
+    def get_battery_type(self):
+        """Battery type"""
+        battery_type = self.retriable_read_register(0x9000, 2, 3)
+        battery_types = {
+            0: "USER_DEFINED",
+            1: "SEALED",
+            2: "GEL",
+            3: "FLOODED"
+        }
+        return battery_types[battery_type]
+
+    def get_battery_capacity(self):
+        """Battery capacity in amp hours"""
+        return self.retriable_read_register(0x9001, 0, 3)
+
+    def get_temperature_compensation_coefficient(self):
+        """Temperature compensation coefficient"""
+        return self.retriable_read_register(0x9002, 0, 3)
+
+    def get_over_voltage_disconnect(self):
+        """Over voltage disconnect"""
+        return self.retriable_read_register(0x9003, 2, 3)
