@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="epevermodbus",
-    version="0.0.7",
+    version="0.0.8",
     description="",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",

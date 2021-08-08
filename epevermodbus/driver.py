@@ -4,7 +4,10 @@ from retrying import retry
 
 
 def extract_bits(data, start_bit, number_of_bits):
-    return data & (number_of_bits << start_bit) >> start_bit
+    mask = number_of_bits << start_bit
+    result = data & mask
+    shifted_result = result >> start_bit
+    return shifted_result
 
 
 class EpeverChargeController(minimalmodbus.Instrument):
