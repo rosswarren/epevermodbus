@@ -17,9 +17,13 @@ def main():
     print("Solar voltage: ", controller.get_solar_voltage())
     print("Solar current: ", controller.get_solar_current())
     print("Solar power: ", controller.get_solar_current())
+    print("Solar power L", controller.get_solar_power_l())
+    print("Solar power H", controller.get_solar_power_h())
     print("Load voltage: ", controller.get_load_voltage())
     print("Load current: ", controller.get_load_current())
     print("Load power: ", controller.get_load_power())
+    print("Load power L", controller.get_load_power_l())
+    print("Load power H", controller.get_load_power_h())
     print("Battery capacity: ", controller.get_battery_capacity())
     print("Battery voltage: ", controller.get_battery_voltage())
     print("Battery state of charge: ", controller.get_battery_state_of_charge())
@@ -31,7 +35,11 @@ def main():
     print(
         "Discharging equipment status: ", controller.get_discharging_equipment_status()
     )
-    print("Day or night", controller.get_day_night())
+    print("Day time", controller.is_day())
+    print("Night time", controller.is_night())
+    print("Maximum battery voltage today", controller.get_maximum_battery_voltage_today())
+    print("Minimum battery voltage today", controller.get_minimum_battery_voltage_today())
+    print("Device over temperature", controller.is_device_over_temperature())
 
 
 if __name__ == "__main__":

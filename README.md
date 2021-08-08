@@ -6,7 +6,7 @@ This package is intended to help you communicate with an EPever charge controlle
 
 You have two options
 
-* EPevers cable
+* Official EPever cable
 * Your own custom cable
 
 ## Installing the package

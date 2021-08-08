@@ -46,6 +46,14 @@ class EpeverChargeController(minimalmodbus.Instrument):
         """PV array input in watts"""
         return self.get_solar_voltage() * self.get_solar_current()
 
+    def get_solar_power_l(self):
+        """PV array input power L"""
+        return self.retriable_read_register(0x3102, 2, 4)
+
+    def get_solar_power_h(self):
+        """PV array input power H"""
+        return self.retriable_read_register(0x3103, 2, 4)
+
     def get_load_voltage(self):
         """Load output in volts"""
         return self.retriable_read_register(0x310C, 2, 4)
@@ -57,6 +65,14 @@ class EpeverChargeController(minimalmodbus.Instrument):
     def get_load_power(self):
         """Load output in watts"""
         return self.get_load_voltage() * self.get_load_current()
+
+    def get_load_power_l(self):
+        """Load power L"""
+        return self.retriable_read_register(0x310E, 2, 4)
+
+    def get_load_power_h(self):
+        """Load power H"""
+        return self.retriable_read_register(0x310F, 2, 4)
 
     def get_battery_capacity(self):
         """Battery capacity in amp hours"""
@@ -94,6 +110,22 @@ class EpeverChargeController(minimalmodbus.Instrument):
         """Charging equipment status"""
         return self.retriable_read_register(0x3202, 2, 4)
 
-    def get_day_night(self):
-        """Day / Night"""
-        return "NIGHT" if self.retriable_read_bit(0x200C, 2) == 1 else "DAY"
+    def is_day(self):
+        """Is day time"""
+        return not self.is_night()
+
+    def is_night(self):
+        """Is night time"""
+        return True if self.retriable_read_bit(0x200C, 2) == 1 else False
+
+    def is_device_over_temperature(self):
+        """Over temperature inside the device"""
+        return True if self.retriable_read_bit(0x2000, 2) == 1 else False
+
+    def get_maximum_battery_voltage_today(self):
+        """Maximum battery voltage today"""
+        return self.retriable_read_register(0x3302, 2, 4)
+
+    def get_minimum_battery_voltage_today(self):
+        """Minimum battery voltage today"""
+        return self.retriable_read_register(0x3303, 2, 4)
