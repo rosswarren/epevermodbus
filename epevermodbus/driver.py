@@ -78,6 +78,14 @@ class EpeverChargeController(minimalmodbus.Instrument):
         """Battery capacity in amp hours"""
         return self.retriable_read_register(0x9001, 0, 3)
 
+    def get_battery_current_l(self):
+        """Battery current L"""
+        return self.retriable_read_register(0x331B, 2, 4)
+
+    def get_battery_current_h(self):
+        """Battery current H"""
+        return self.retriable_read_register(0x331C, 2, 4)
+
     def get_battery_voltage(self):
         """Battery voltage"""
         return self.retriable_read_register(0x331A, 2, 4)

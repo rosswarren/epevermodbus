@@ -25,6 +25,8 @@ def main():
     print("Load power L", controller.get_load_power_l())
     print("Load power H", controller.get_load_power_h())
     print("Battery capacity: ", controller.get_battery_capacity())
+    print("Battery current L: ", controller.get_battery_current_l())
+    print("Battery current H: ", controller.get_battery_current_h())
     print("Battery voltage: ", controller.get_battery_voltage())
     print("Battery state of charge: ", controller.get_battery_state_of_charge())
     print("Battery temperature: ", controller.get_battery_temperature())
