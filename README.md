@@ -32,13 +32,13 @@ Real Time Data
 Solar voltage:  23.28
 Solar current:  0.16
 Solar power:  0.17
-Solar power L 3.65
-Solar power H 0.0
+Solar power L: 3.65
+Solar power H: 0.0
 Load voltage:  0.0
 Load current:  0.0
 Load power:  0.0
-Load power L 0.0
-Load power H 0.0
+Load power L: 0.0
+Load power H: 0.0
 Battery capacity:  40
 Battery current L:  0.28
 Battery current H:  0.0
