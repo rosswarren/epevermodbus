@@ -112,7 +112,43 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_charging_equipment_status(self):
         """Charging equipment status"""
-        return self.retriable_read_register(0x3201, 2, 4)
+        register_value = self.retriable_read_register(0x3201, 0, 4)
+
+        # D3-2
+        charging_status_mask = 3 << 2
+        charging_status = register_value & charging_status_mask >> 2
+        charging_statuses = {
+            0: "NO_CHARGING",
+            1: "FLOAT",
+            2: "BOOST",
+            3: "EQUALIZATION",
+        }
+
+        # D15-14
+        input_status_mask = 3 << 15
+        input_status = register_value & input_status_mask >> 2
+        input_voltage_statuses = {
+            0: "NORMAL",
+            1: "NO_INPUT_POWER",
+            2: "HIGHER_INPUT",
+            3: "INPUT_VOLTAGE_ERROR",
+        }
+
+        return {
+            "input_voltage_status": input_voltage_statuses[input_status],
+            "disequilibrium_in_three_circuits": False,
+            "charging_status": charging_statuses[charging_status],
+            "pv_input_short_circuit": False,
+            "load_mosfet_short_circuit": False,
+            "anti_reverse_mosfet_short_circuit": False,
+            "charging_mosfet_is_short_circuit": False,
+            "charging_or_anti_reverse_mosfet_is_open_circuit": False,
+            "load_short_circuit": False,
+            "load_over_current": False,
+            "input_over_current": False,
+            "fault": False,
+            "running": False,
+        }
 
     def get_discharging_equipment_status(self):
         """Charging equipment status"""
