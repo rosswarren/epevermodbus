@@ -3,6 +3,10 @@ import serial
 from retrying import retry
 
 
+def extract_bits(data, start_bit, number_of_bits):
+    return data & (number_of_bits << start_bit) >> start_bit
+
+
 class EpeverChargeController(minimalmodbus.Instrument):
     """Instrument class for Epever Charge Controllers.
 
@@ -108,25 +112,45 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_battery_status(self):
         """Battery status"""
-        return self.retriable_read_register(0x3200, 2, 4)
+        register_value = self.retriable_read_register(0x3200, 0, 4)
+
+        # D7-4
+        temperature_warning_status = extract_bits(register_value, 4, 0b111)
+        temperature_warning_statuses = {
+            0: "NORMAL",
+            1: "OVER_TEMP",  # Higher than warning settings
+            2: "LOW_TEMP",  # Lower than warning settings
+        }
+
+        # D3-0
+        battery_status = extract_bits(register_value, 0, 0b111)
+        battery_statuses = {
+            0: "NORMAL",
+            1: "OVER_VOLTAGE",
+            2: "UNDER_VOLTAGE",
+            3: "OVER_DISCHARGE",
+            4: "FAULT",
+        }
+
+        return {
+            "wrong_identifaction_for_rated_voltage": bool(
+                extract_bits(register_value, 15, 0b1)
+            ),
+            "battery_inner_resistence_abnormal": bool(
+                extract_bits(register_value, 8, 0b1)
+            ),
+            "temperature_warning_status": temperature_warning_statuses[
+                temperature_warning_status
+            ],
+            "battery_status": battery_statuses[battery_status],
+        }
 
     def get_charging_equipment_status(self):
         """Charging equipment status"""
         register_value = self.retriable_read_register(0x3201, 0, 4)
 
-        # D3-2
-        charging_status_mask = 3 << 2
-        charging_status = register_value & charging_status_mask >> 2
-        charging_statuses = {
-            0: "NO_CHARGING",
-            1: "FLOAT",
-            2: "BOOST",
-            3: "EQUALIZATION",
-        }
-
         # D15-14
-        input_status_mask = 3 << 15
-        input_status = register_value & input_status_mask >> 2
+        input_status = extract_bits(register_value, 14, 0b11)
         input_voltage_statuses = {
             0: "NORMAL",
             1: "NO_INPUT_POWER",
@@ -134,25 +158,78 @@ class EpeverChargeController(minimalmodbus.Instrument):
             3: "INPUT_VOLTAGE_ERROR",
         }
 
+        # D3-2
+        charging_status = extract_bits(register_value, 2, 0b11)
+        charging_statuses = {
+            0: "NO_CHARGING",
+            1: "FLOAT",
+            2: "BOOST",
+            3: "EQUALIZATION",
+        }
+
         return {
             "input_voltage_status": input_voltage_statuses[input_status],
-            "disequilibrium_in_three_circuits": False,
+            "charging_mosfet_is_short_circuit": bool(
+                extract_bits(register_value, 13, 0b1)
+            ),
+            "charging_or_anti_reverse_mosfet_is_open_circuit": bool(
+                extract_bits(register_value, 12, 0b1)
+            ),
+            "anti_reverse_mosfet_is_short_circuit": bool(
+                extract_bits(register_value, 11, 0b1)
+            ),
+            "input_over_current": bool(extract_bits(register_value, 10, 0b1)),
+            "load_over_current": bool(extract_bits(register_value, 9, 0b1)),
+            "load_short_circuit": bool(extract_bits(register_value, 8, 0b1)),
+            "load_mosfet_short_circuit": bool(extract_bits(register_value, 7, 0b1)),
+            "disequilibrium_in_three_circuits": bool(
+                extract_bits(register_value, 6, 0b1)
+            ),
+            "pv_input_short_circuit": bool(extract_bits(register_value, 4, 0b1)),
             "charging_status": charging_statuses[charging_status],
-            "pv_input_short_circuit": False,
-            "load_mosfet_short_circuit": False,
-            "anti_reverse_mosfet_short_circuit": False,
-            "charging_mosfet_is_short_circuit": False,
-            "charging_or_anti_reverse_mosfet_is_open_circuit": False,
-            "load_short_circuit": False,
-            "load_over_current": False,
-            "input_over_current": False,
-            "fault": False,
-            "running": False,
+            "fault": bool(extract_bits(register_value, 1, 0b1)),
+            "running": bool(extract_bits(register_value, 0, 0b1)),
         }
 
     def get_discharging_equipment_status(self):
         """Charging equipment status"""
-        return self.retriable_read_register(0x3202, 2, 4)
+        register_value = self.retriable_read_register(0x3202, 0, 4)
+
+        # D15-14
+        input_status = extract_bits(register_value, 14, 0b11)
+        input_voltage_statuses = {
+            0: "NORMAL",
+            1: "LOW",
+            2: "HIGH",
+            3: "NO_ACCESS",
+        }
+
+        # D13-12
+        output_power_load = extract_bits(register_value, 12, 0b11)
+        output_power_loads = {
+            0: "LIGHT",
+            1: "MODERATE",
+            2: "RATED",
+            3: "OVERLOAD",
+        }
+
+        return {
+            "input_voltage_status": input_voltage_statuses[input_status],
+            "output_power_load": output_power_loads[output_power_load],
+            "short_circuit": bool(extract_bits(register_value, 11, 0b1)),
+            "unable_to_discharge": bool(extract_bits(register_value, 10, 0b1)),
+            "unable_to_stop_discharging": bool(extract_bits(register_value, 9, 0b1)),
+            "output_voltage_abnormal": bool(extract_bits(register_value, 8, 0b1)),
+            "input_over_voltage": bool(extract_bits(register_value, 7, 0b1)),
+            "short_circuit_in_high_voltage_side": bool(
+                extract_bits(register_value, 6, 0b1)
+            ),
+            "boost_over_voltage": bool(extract_bits(register_value, 5, 0b1)),
+            "output_over_voltage": bool(extract_bits(register_value, 4, 0b1)),
+            "output_over_voltage": bool(extract_bits(register_value, 4, 0b1)),
+            "fault": bool(extract_bits(register_value, 1, 0b1)),
+            "running": bool(extract_bits(register_value, 0, 0b1)),
+        }
 
     def is_day(self):
         """Is day time"""
