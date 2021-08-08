@@ -38,20 +38,20 @@ def main():
     print(
         "Discharging equipment status: ", controller.get_discharging_equipment_status()
     )
-    print("Day time", controller.is_day())
-    print("Night time", controller.is_night())
+    print("Day time:", controller.is_day())
+    print("Night time:", controller.is_night())
     print(
-        "Maximum battery voltage today", controller.get_maximum_battery_voltage_today()
+        "Maximum battery voltage today:", controller.get_maximum_battery_voltage_today()
     )
     print(
-        "Minimum battery voltage today", controller.get_minimum_battery_voltage_today()
+        "Minimum battery voltage today:", controller.get_minimum_battery_voltage_today()
     )
-    print("Device over temperature", controller.is_device_over_temperature())
+    print("Device over temperature:", controller.is_device_over_temperature())
     print("\n")
-    print("Battery Parameters")
-    print("Rated charging current", controller.get_rated_charging_current())
-    print("Rated load current", controller.get_rated_load_current())
-    print("Battery real rated voltage", controller.get_battery_real_rated_voltage())
+    print("Battery Parameters:")
+    print("Rated charging current:", controller.get_rated_charging_current())
+    print("Rated load current:", controller.get_rated_load_current())
+    print("Battery real rated voltage:", controller.get_battery_real_rated_voltage())
 
 
 if __name__ == "__main__":
