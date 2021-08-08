@@ -265,12 +265,7 @@ class EpeverChargeController(minimalmodbus.Instrument):
     def get_battery_type(self):
         """Battery type"""
         battery_type = self.retriable_read_register(0x9000, 2, 3)
-        battery_types = {
-            0: "USER_DEFINED",
-            1: "SEALED",
-            2: "GEL",
-            3: "FLOODED"
-        }
+        battery_types = {0: "USER_DEFINED", 1: "SEALED", 2: "GEL", 3: "FLOODED"}
         return battery_types[battery_type]
 
     def get_battery_capacity(self):

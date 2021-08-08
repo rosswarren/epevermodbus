@@ -53,8 +53,12 @@ def main():
     print("Battery real rated voltage:", controller.get_battery_real_rated_voltage())
     print("Battery type:", controller.get_battery_type())
     print("Battery capacity:", controller.get_battery_capacity())
-    print("Temperature compensation coefficient:", controller.get_temperature_compensation_coefficient())
+    print(
+        "Temperature compensation coefficient:",
+        controller.get_temperature_compensation_coefficient(),
+    )
     print("Over voltage disconnect:", controller.get_over_voltage_disconnect())
+
 
 if __name__ == "__main__":
     main()
