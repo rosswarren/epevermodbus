@@ -2,7 +2,8 @@ import minimalmodbus
 import serial
 from retrying import retry
 
-class EpeverChargeController( minimalmodbus.Instrument ):
+
+class EpeverChargeController(minimalmodbus.Instrument):
     """Instrument class for Epever Charge Controllers.
 
     Args:
@@ -22,8 +23,12 @@ class EpeverChargeController( minimalmodbus.Instrument ):
         self.clear_buffers_before_each_transaction = True
 
     @retry(wait_fixed=200, stop_max_attempt_number=5)
-    def retriable_read_register(self, registeraddress, number_of_decimals, functioncode):
-        return self.read_register(registeraddress, number_of_decimals, functioncode, False)
+    def retriable_read_register(
+        self, registeraddress, number_of_decimals, functioncode
+    ):
+        return self.read_register(
+            registeraddress, number_of_decimals, functioncode, False
+        )
 
     @retry(wait_fixed=200, stop_max_attempt_number=5)
     def retriable_read_bit(self, registeraddress, functioncode):
@@ -80,10 +85,10 @@ class EpeverChargeController( minimalmodbus.Instrument ):
     def get_battery_status(self):
         """Battery status"""
         return self.retriable_read_register(0x3200, 2, 4)
-        
+
     def get_charging_equipment_status(self):
         """Charging equipment status"""
-        return self.retriable_read_register(0x3201, 2, 4)        
+        return self.retriable_read_register(0x3201, 2, 4)
 
     def get_discharging_equipment_status(self):
         """Charging equipment status"""
@@ -92,24 +97,3 @@ class EpeverChargeController( minimalmodbus.Instrument ):
     def get_day_night(self):
         """Day / Night"""
         return "NIGHT" if self.retriable_read_bit(0x200C, 2) == 1 else "DAY"
-
-
-if __name__ == "__main__":
-    controller = EpeverChargeController("/dev/ttyUSB1", 1)
-    print('Solar voltage: ', controller.get_solar_voltage())
-    print('Solar current: ', controller.get_solar_current())
-    print('Solar power: ', controller.get_solar_current())
-    print('Load voltage: ', controller.get_load_voltage())
-    print('Load current: ', controller.get_load_current())
-    print('Load power: ', controller.get_load_power())
-    print('Battery capacity: ', controller.get_battery_capacity())
-    print('Battery voltage: ', controller.get_battery_voltage())
-    print('Battery state of charge: ', controller.get_battery_state_of_charge())
-    print('Battery temperature: ', controller.get_battery_temperature())
-    print('Remote battery temperature: ', controller.get_remote_battery_temperature())
-    print('Controller temperature: ', controller.get_controller_temperature())
-    print('Battery status: ', controller.get_battery_status())
-    print('Charging equipment status: ', controller.get_charging_equipment_status())
-    print('Discharging equipment status: ', controller.get_discharging_equipment_status())
-    print('Day or night', controller.get_day_night())
-
