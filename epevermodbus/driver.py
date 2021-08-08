@@ -137,3 +137,15 @@ class EpeverChargeController(minimalmodbus.Instrument):
     def get_minimum_battery_voltage_today(self):
         """Minimum battery voltage today"""
         return self.retriable_read_register(0x3303, 2, 4)
+
+    def get_rated_charging_current(self):
+        """Rated charging current"""
+        return self.retriable_read_register(0x3005, 2, 4)
+
+    def get_rated_load_current(self):
+        """Rated load current"""
+        return self.retriable_read_register(0x300E, 2, 4)
+
+    def get_battery_real_rated_voltage(self):
+        """Battery real rated voltage"""
+        return self.retriable_read_register(0x311D, 2, 4)
