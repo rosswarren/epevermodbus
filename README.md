@@ -110,6 +110,6 @@ from epevermodbus.driver import EpeverChargeController
 controller = EpeverChargeController("/dev/ttyUSB0", 1)
 
 controller.get_solar_voltage()
+```
 
 See https://github.com/rosswarren/epevermodbus/blob/main/epevermodbus/driver.py for all available methods
-```
