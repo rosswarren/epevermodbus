@@ -1,13 +1,7 @@
 import minimalmodbus
 import serial
 from retrying import retry
-
-
-def extract_bits(data, start_bit, number_of_bits):
-    mask = number_of_bits << start_bit
-    result = data & mask
-    shifted_result = result >> start_bit
-    return shifted_result
+from epevermodbus.extract_bits import extract_bits
 
 
 class EpeverChargeController(minimalmodbus.Instrument):
@@ -114,22 +108,20 @@ class EpeverChargeController(minimalmodbus.Instrument):
         register_value = self.retriable_read_register(0x3200, 0, 4)
 
         # D7-4
-        temperature_warning_status = extract_bits(register_value, 4, 0b111)
-        temperature_warning_statuses = {
+        temperature_warning_status = {
             0: "NORMAL",
             1: "OVER_TEMP",  # Higher than warning settings
             2: "LOW_TEMP",  # Lower than warning settings
-        }
+        }[extract_bits(register_value, 4, 0b111)]
 
         # D3-0
-        battery_status = extract_bits(register_value, 0, 0b111)
-        battery_statuses = {
+        battery_status = {
             0: "NORMAL",
             1: "OVER_VOLTAGE",
             2: "UNDER_VOLTAGE",
             3: "OVER_DISCHARGE",
             4: "FAULT",
-        }
+        }[extract_bits(register_value, 0, 0b111)]
 
         return {
             "wrong_identifaction_for_rated_voltage": bool(
@@ -138,10 +130,8 @@ class EpeverChargeController(minimalmodbus.Instrument):
             "battery_inner_resistence_abnormal": bool(
                 extract_bits(register_value, 8, 0b1)
             ),
-            "temperature_warning_status": temperature_warning_statuses[
-                temperature_warning_status
-            ],
-            "battery_status": battery_statuses[battery_status],
+            "temperature_warning_status": temperature_warning_status,
+            "battery_status": battery_status,
         }
 
     def get_charging_equipment_status(self):
@@ -149,25 +139,23 @@ class EpeverChargeController(minimalmodbus.Instrument):
         register_value = self.retriable_read_register(0x3201, 0, 4)
 
         # D15-14
-        input_status = extract_bits(register_value, 14, 0b11)
-        input_voltage_statuses = {
+        input_voltage_status = {
             0: "NORMAL",
             1: "NO_INPUT_POWER",
             2: "HIGHER_INPUT",
             3: "INPUT_VOLTAGE_ERROR",
-        }
+        }[extract_bits(register_value, 14, 0b11)]
 
         # D3-2
-        charging_status = extract_bits(register_value, 2, 0b11)
-        charging_statuses = {
+        charging_status = {
             0: "NO_CHARGING",
             1: "FLOAT",
             2: "BOOST",
             3: "EQUALIZATION",
-        }
+        }[extract_bits(register_value, 2, 0b11)]
 
         return {
-            "input_voltage_status": input_voltage_statuses[input_status],
+            "input_voltage_status": input_voltage_status,
             "charging_mosfet_is_short_circuit": bool(
                 extract_bits(register_value, 13, 0b1)
             ),
@@ -185,8 +173,10 @@ class EpeverChargeController(minimalmodbus.Instrument):
                 extract_bits(register_value, 6, 0b1)
             ),
             "pv_input_short_circuit": bool(extract_bits(register_value, 4, 0b1)),
-            "charging_status": charging_statuses[charging_status],
-            "fault": bool(extract_bits(register_value, 1, 0b1)),
+            "charging_status": charging_status,
+            "fault": bool(
+                extract_bits(register_value, 1, 0b1)
+            ),  # this does not seem to be functioning correctly. Fault status is returned when no fault.
             "running": bool(extract_bits(register_value, 0, 0b1)),
         }
 
@@ -195,26 +185,24 @@ class EpeverChargeController(minimalmodbus.Instrument):
         register_value = self.retriable_read_register(0x3202, 0, 4)
 
         # D15-14
-        input_status = extract_bits(register_value, 14, 0b11)
-        input_voltage_statuses = {
+        input_voltage_status = {
             0: "NORMAL",
             1: "LOW",
             2: "HIGH",
             3: "NO_ACCESS",
-        }
+        }[extract_bits(register_value, 14, 0b11)]
 
         # D13-12
-        output_power_load = extract_bits(register_value, 12, 0b11)
-        output_power_loads = {
+        output_power_load = {
             0: "LIGHT",
             1: "MODERATE",
             2: "RATED",
             3: "OVERLOAD",
-        }
+        }[extract_bits(register_value, 12, 0b11)]
 
         return {
-            "input_voltage_status": input_voltage_statuses[input_status],
-            "output_power_load": output_power_loads[output_power_load],
+            "input_voltage_status": input_voltage_status,
+            "output_power_load": output_power_load,
             "short_circuit": bool(extract_bits(register_value, 11, 0b1)),
             "unable_to_discharge": bool(extract_bits(register_value, 10, 0b1)),
             "unable_to_stop_discharging": bool(extract_bits(register_value, 9, 0b1)),
@@ -264,9 +252,9 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_battery_type(self):
         """Battery type"""
-        battery_type = self.retriable_read_register(0x9000, 2, 3)
-        battery_types = {0: "USER_DEFINED", 1: "SEALED", 2: "GEL", 3: "FLOODED"}
-        return battery_types[battery_type]
+        return {0: "USER_DEFINED", 1: "SEALED", 2: "GEL", 3: "FLOODED"}[
+            self.retriable_read_register(0x9000, 2, 3)
+        ]
 
     def get_battery_capacity(self):
         """Battery capacity in amp hours"""
