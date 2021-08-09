@@ -3,7 +3,7 @@ import unittest
 from epevermodbus import extract_bits
 
 
-class MyTestCase(unittest.TestCase):
+class ExtractBitsTestCase(unittest.TestCase):
     def test_extract_d3_2(self):
         data = 11
 

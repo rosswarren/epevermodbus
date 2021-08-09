@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="epevermodbus",
-    version="0.0.9",
+    version="0.0.11",
     description="",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
@@ -17,6 +17,7 @@ setup(
     packages=["epevermodbus"],
     include_package_data=True,
     install_requires=["minimalmodbus", "retrying"],
+    test_suite="test",
     entry_points={
         "console_scripts": [
             "epevermodbus = epevermodbus.command_line:main",

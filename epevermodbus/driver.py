@@ -89,7 +89,7 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_battery_state_of_charge(self):
         """Battery state of charge"""
-        return self.retriable_read_register(0x311A, 2, 4)
+        return self.retriable_read_register(0x311A, 0, 4)
 
     def get_battery_temperature(self):
         """battery temperature"""
@@ -264,6 +264,91 @@ class EpeverChargeController(minimalmodbus.Instrument):
         """Temperature compensation coefficient"""
         return self.retriable_read_register(0x9002, 0, 3)
 
-    def get_over_voltage_disconnect(self):
-        """Over voltage disconnect"""
+    def get_over_voltage_disconnect_voltage(self):
+        """Over voltage disconnect voltage"""
         return self.retriable_read_register(0x9003, 2, 3)
+
+    def get_charging_limit_voltage(self):
+        """Charging limit voltage"""
+        return self.retriable_read_register(0x9004, 2, 3)
+
+    def get_over_voltage_reconnect_voltage(self):
+        """Over voltage reconnect voltage"""
+        return self.retriable_read_register(0x9005, 2, 3)
+
+    def get_equalize_charging_voltage(self):
+        """Equalize charging voltage"""
+        return self.retriable_read_register(0x9006, 2, 3)
+
+    def get_boost_charging_voltage(self):
+        """Boost charging voltage"""
+        return self.retriable_read_register(0x9007, 2, 3)
+
+    def get_float_charging_voltage(self):
+        """Float charging voltage"""
+        return self.retriable_read_register(0x9008, 2, 3)
+
+    def get_boost_reconnect_charging_voltage(self):
+        """Boost reconnect charging voltage"""
+        return self.retriable_read_register(0x9009, 2, 3)
+
+    def get_low_voltage_reconnect_voltage(self):
+        """Low voltage reconnect voltage"""
+        return self.retriable_read_register(0x900A, 2, 3)
+
+    def get_under_voltage_recover_voltage(self):
+        """Under voltage warning recover voltage"""
+        return self.retriable_read_register(0x900B, 2, 3)
+
+    def get_under_voltage_warning_voltage(self):
+        """Under voltage warning voltage"""
+        return self.retriable_read_register(0x900C, 2, 3)
+
+    def get_low_voltage_disconnect_voltage(self):
+        """Low voltage disconnect voltage"""
+        return self.retriable_read_register(0x900D, 2, 3)
+
+    def get_discharging_limit_voltage(self):
+        """Discharging limit voltage"""
+        return self.retriable_read_register(0x900E, 2, 3)
+
+    def get_battery_rated_voltage(self):
+        """Battery rated voltage"""
+        return {
+            0: "AUTO",
+            1: "12V",
+            2: "24V",
+            3: "36V",
+            4: "48V",
+            5: "60V",
+            6: "110V",
+            7: "120V",
+            8: "220V",
+            9: "240V",
+        }[self.retriable_read_register(0x9067, 0, 3)]
+
+    def get_default_load_on_off_in_manual_mode(self):
+        """Default load On/Off in manual mode"""
+        return {0: "OFF", 1: "ON"}[self.retriable_read_register(0x906A, 0, 3)]
+
+    def get_equalize_duration(self):
+        """Equalize duration"""
+        return self.retriable_read_register(0x906B, 0, 3)
+
+    def get_boost_duration(self):
+        """Equalize duration"""
+        return self.retriable_read_register(0x906C, 0, 3)
+
+    def get_battery_discharge(self):
+        """Battery discharge"""
+        return self.retriable_read_register(0x906D, 0, 3)
+
+    def get_battery_charge(self):
+        """Battery charge"""
+        return self.retriable_read_register(0x906E, 0, 3)
+
+    def get_charging_mode(self):
+        """Charging mode"""
+        return {0: "VOLTAGE_COMPENSATION", 1: "SOC"}[
+            self.retriable_read_register(0x9070, 0, 3)
+        ]

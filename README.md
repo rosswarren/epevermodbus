@@ -44,38 +44,59 @@ Example output
 
 ```sh
 Real Time Data
-Solar voltage: 0.0
-Solar current: 0.0
-Solar power: 0.0
-Solar power L: 0.0
-Solar power H: 0.0
-Load voltage: 0.0
-Load current: 0.0
-Load power: 0.0
-Load power L: 0.0
-Load power H: 0.0
-Battery capacity: 40
-Battery current L: 0.0
-Battery current H: 0.0
-Battery voltage: 13.27
-Battery state of charge: 0.87
-Battery temperature: 17.08
-Remote battery temperature: 0.0
-Controller temperature: 16.42
+Solar voltage: 0.02V
+Solar current: 0.0A
+Solar power: 0.0W
+Solar power L: 0.0W
+Solar power H: 0.0W
+Load voltage: 0.0V
+Load current: 0.0A
+Load power: 0.0W
+Load power L: 0.0W
+Load power H: 0.0W
+Battery current L: 0.0A
+Battery current H: 0.0A
+Battery voltage: 13.25V
+Battery state of charge: 86%
+Battery temperature: 16.91°C
+Remote battery temperature: 0.0°C
+Controller temperature: 16.55°C
 Battery status: {'wrong_identifaction_for_rated_voltage': False, 'battery_inner_resistence_abnormal': False, 'temperature_warning_status': 'NORMAL', 'battery_status': 'NORMAL'}
 Charging equipment status: {'input_voltage_status': 'NORMAL', 'charging_mosfet_is_short_circuit': False, 'charging_or_anti_reverse_mosfet_is_open_circuit': False, 'anti_reverse_mosfet_is_short_circuit': False, 'input_over_current': False, 'load_over_current': False, 'load_short_circuit': False, 'load_mosfet_short_circuit': False, 'disequilibrium_in_three_circuits': False, 'pv_input_short_circuit': False, 'charging_status': 'NO_CHARGING', 'fault': False, 'running': True}
 Discharging equipment status: {'input_voltage_status': 'NORMAL', 'output_power_load': 'LIGHT', 'short_circuit': False, 'unable_to_discharge': False, 'unable_to_stop_discharging': False, 'output_voltage_abnormal': False, 'input_over_voltage': False, 'short_circuit_in_high_voltage_side': False, 'boost_over_voltage': False, 'output_over_voltage': False, 'fault': False, 'running': False}
 Day time: False
 Night time: True
-Maximum battery voltage today: 14.74
-Minimum battery voltage today: 13.27
+Maximum battery voltage today: 14.5V
+Minimum battery voltage today: 13.25V
 Device over temperature: False
 
 
 Battery Parameters:
-Rated charging current: 20.0
-Rated load current: 20.0
-Battery real rated voltage: 12.0
+Rated charging current: 20.0A
+Rated load current: 20.0A
+Battery real rated voltage: 12.0V
+Battery type: USER_DEFINED
+Battery capacity: 40AH
+Temperature compensation coefficient: 0
+Over voltage disconnect voltage: 14.7V
+Charging limit voltage: 14.4V
+Over voltage reconnect voltage: 14.6V
+Equalize charging voltage: 14.4V
+Boost charging voltage: 14.4V
+Float charging voltage: 13.6V
+Boost reconnect charging voltage: 13.3V
+Low voltage reconnect voltage: 12.0V
+Under voltage recover voltage: 12.0V
+Under voltage warning voltage: 11.5V
+Low voltage disconnect voltage: 11.0V
+Discharging limit voltage: 11.0V
+Battery rated voltage: 12V
+Default load on/off in manual mode: OFF
+Equalize duration: 0 min
+Boost duration: 180 min
+Battery discharge: 30%
+Battery charge: 100%
+Charging mode: VOLTAGE_COMPENSATION
 ```
 
 ## Python usage
@@ -89,4 +110,6 @@ from epevermodbus.driver import EpeverChargeController
 controller = EpeverChargeController("/dev/ttyUSB0", 1)
 
 controller.get_solar_voltage()
+
+See https://github.com/rosswarren/epevermodbus/blob/main/epevermodbus/driver.py for all available methods
 ```
