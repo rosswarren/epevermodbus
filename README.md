@@ -2,11 +2,16 @@
 
 This package is intended to help you communicate with an EPever charge controller. It has been tested with an EPever Tracer AN but should work with other devices.
 
+![image](https://user-images.githubusercontent.com/613642/128763284-c5bbe67b-3905-479a-8a90-b1db16ff59fb.png)
+
 ## Connecting to the charge controller
 
 You have two options
 
 * Official EPever cable
+
+![image](https://user-images.githubusercontent.com/613642/128763357-c88e8ef6-481c-470f-9ca3-40dd7cf85914.png)
+
 * Your own custom cable
 
 ## Installing the package
