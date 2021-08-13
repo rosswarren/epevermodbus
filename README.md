@@ -1,18 +1,35 @@
 # epevermodbus
 
-This package is intended to help you communicate with an EPever charge controller. It has been tested with an EPever Tracer AN but should work with other devices.
+This package is intended to help you communicate with an EPever charge controller. It has been tested with an EPever Tracer AN but should work with other EPever devices.
 
 ![image](https://user-images.githubusercontent.com/613642/128763284-c5bbe67b-3905-479a-8a90-b1db16ff59fb.png)
 
+## Features
+* Read real time data
+* Read battery parameters
+* Write battery parameters _this feature is a work in progress_
+* Automatic retries
+
 ## Connecting to the charge controller
 
-You have two options
+I have only tested this package on Linux / Raspberry Pi but I see no reason why it should not work on other devices.
+
+For the cable you have two options
 
 * Official EPever cable
 
 ![image](https://user-images.githubusercontent.com/613642/128763357-c88e8ef6-481c-470f-9ca3-40dd7cf85914.png)
 
+When using the offical cable on Linux your device will show up something like `/dev/ttyXRUSB0`. You will need to use a custom driver to use this cable on Linux rather than the bundled cdc-acm driver. It can be difficult to get this driver working properly on Linux and Raspberry Pi.
+
+On Windows you can use the driver provided by EPever and the cable should work fine so long as you check the rs485 checkbox in device manager.
+
 * Your own custom cable
+
+You can make your own cable using a cat5 cable, a cat5 breakout, and a USB breakout then wiring the correct pins together.
+With this approach you won't need a custom driver on Linux so it should be easier to get working. The device should show up as something like `/dev/ttyUSB0`.
+
+_more details to follow soon_
 
 ## Installing the package
 
@@ -21,6 +38,8 @@ To install the package run
 ```sh
 pip install epevermodbus
 ```
+
+This package requires Python 3.
 
 ## Command line utility
 
