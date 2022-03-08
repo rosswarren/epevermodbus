@@ -32,13 +32,20 @@ For more information read: https://tomato.solar/2021/08/14/building-a-cable-to-c
 
 ## Installing the package
 
+
+
 To install the package run
 
 ```sh
 pip install epevermodbus
 ```
 
-This package requires Python 3.
+This package requires Python 3, depending on your setup you might have to instead run:
+
+```sh
+pip3 install epevermodbus
+```
+
 
 ## Command line utility
 
