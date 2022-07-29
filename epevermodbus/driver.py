@@ -33,10 +33,10 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     @retry(wait_fixed=200, stop_max_attempt_number=5)
     def retriable_read_long(
-        self, registeraddress, functioncode, byteorder
+        self, registeraddress, functioncode, signed=False, byteorder=minimalmodbus.BYTEORDER_BIG
     ):
         return self.read_long(
-            registeraddress, functioncode, False, byteorder
+            registeraddress, functioncode, signed, byteorder
         )
 
     @retry(wait_fixed=200, stop_max_attempt_number=5)
@@ -53,7 +53,7 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_solar_power(self):
         """PV array input power"""
-        return self.retriable_read_long(0x3102, 4, minimalmodbus.BYTEORDER_BIG) / 100
+        return self.retriable_read_long(0x3102, 4) / 100
 
     def get_load_voltage(self):
         """Load output in volts"""
@@ -65,11 +65,11 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_load_power(self):
         """Load output in watts"""
-        return self.retriable_read_long(0x310E, 4, minimalmodbus.BYTEORDER_BIG) / 100
+        return self.retriable_read_long(0x310E, 4) / 100
 
     def get_battery_current(self):
-        """Load output in watts"""
-        return self.retriable_read_long(0x331B, 4, minimalmodbus.BYTEORDER_BIG) / 100
+        """Battery current in amps"""
+        return self.retriable_read_long(0x331B, 4) / 100
 
     def get_battery_voltage(self):
         """Battery voltage"""
@@ -77,7 +77,7 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_battery_power(self):
         """Battery power in watts"""
-        return self.retriable_read_long(0x3106, 4, minimalmodbus.BYTEORDER_BIG) / 100
+        return self.retriable_read_long(0x3106, 4) / 100
 
     def get_battery_state_of_charge(self):
         """Battery state of charge"""
