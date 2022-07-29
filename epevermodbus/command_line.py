@@ -17,7 +17,7 @@ def main():
     print("Real Time Data")
     print(f"Solar voltage: {controller.get_solar_voltage()}V")
     print(f"Solar current: {controller.get_solar_current()}A")
-    print(f"Solar power: {controller.get_solar_current()}W")
+    print(f"Solar power: {controller.get_solar_power()}W")
     print(f"Solar power L: {controller.get_solar_power_l()}W")
     print(f"Solar power H: {controller.get_solar_power_h()}W")
     print(f"Load voltage: {controller.get_load_voltage()}V")
