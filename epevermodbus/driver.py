@@ -13,7 +13,7 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     """
 
-    register_names = [
+    battery_voltage_control_register_names = [
         "over_voltage_disconnect_voltage",
         "charging_limit_voltage",
         "over_voltage_reconnect_voltages",
@@ -282,45 +282,32 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_battery_voltage_control_registers(self):
         """Returns all 12 battery voltage control settings"""
-        register_values = self.retriable_read_registers(0x9003, 12, 3)
+        battery_voltage_control_register_values = self.retriable_read_registers(0x9003, 12, 3)
         return {
-            register_name: register_values[idx] / 100
-            for idx, register_name in enumerate(self.register_names)
+            register_name: battery_voltage_control_register_values[idx] / 100
+            for idx, register_name in enumerate(self.battery_voltage_control_register_names)
         }
 
-    def set_battery_voltage_control_registers(
-        self, **kwargs):
+    def set_battery_voltage_control_registers(self, **kwargs):
         """Sets all 12 battery voltage control settings"""
         print("kwargs:", kwargs)
         if not len(kwargs):
             raise TypeError("set_battery_voltage_control_registers() missing keyword arguments")
 
-        if not all([kw_name in self.register_names for kw_name in kwargs.keys()]):
+        if not all([kw_name in self.battery_voltage_control_register_names for kw_name in kwargs.keys()]):
             raise TypeError("set_battery_voltage_control_registers() got an unexpected keyword argument")
 
-        current_values = self.get_battery_voltage_control_registers()
-        print("current_values:", current_values)
-        current_values.update(kwargs)
-        print("current_values:", current_values)
+        values_dict = self.get_battery_voltage_control_registers()
+        print("values_dict(current):", values_dict)
+        values_dict.update(kwargs)
+        print("values_dict(updated):", values_dict)
 
-        register_values = [
-            #over_voltage_disconnect_voltage,
-            #charging_limit_voltage,
-            #over_voltage_reconnect_voltages,
-            #equalize_charging_voltage,
-            #boost_charging_voltage,
-            #float_charging_voltage,
-            #boost_reconnect_charging_voltage,
-            #low_voltage_reconnect_voltage,
-            #under_voltage_recover_voltage,
-            #under_voltage_warning_voltage,
-            #low_voltage_disconnect_voltage,
-            #discharging_limit_voltage
+        values = [
+            int(values_dict[register_name] * 100)
+            for register_name in self.battery_voltage_control_register_names
         ]
-        if not all(register_values):
-            # One or more values are missing and need to be read
-            current_values = self.get_battery_voltage_control_registers()
-
+        print(f"write_registers(values={values})")
+        self.write_registers(0x9003, values)
         return
 
     def get_over_voltage_disconnect_voltage(self):
