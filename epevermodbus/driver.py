@@ -32,6 +32,14 @@ class EpeverChargeController(minimalmodbus.Instrument):
         )
 
     @retry(wait_fixed=200, stop_max_attempt_number=5)
+    def retriable_read_long(
+        self, registeraddress, functioncode, signed=False, byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
+    ):
+        return self.read_long(
+            registeraddress, functioncode, signed, byteorder
+        )
+
+    @retry(wait_fixed=200, stop_max_attempt_number=5)
     def retriable_read_bit(self, registeraddress, functioncode):
         return self.read_bit(registeraddress, functioncode)
 
@@ -44,16 +52,8 @@ class EpeverChargeController(minimalmodbus.Instrument):
         return self.retriable_read_register(0x3101, 2, 4)
 
     def get_solar_power(self):
-        """PV array input in watts"""
-        return self.get_solar_voltage() * self.get_solar_current()
-
-    def get_solar_power_l(self):
-        """PV array input power L"""
-        return self.retriable_read_register(0x3102, 2, 4)
-
-    def get_solar_power_h(self):
-        """PV array input power H"""
-        return self.retriable_read_register(0x3103, 2, 4)
+        """PV array input power"""
+        return self.retriable_read_long(0x3102, 4) / 100
 
     def get_load_voltage(self):
         """Load output in volts"""
@@ -65,27 +65,19 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_load_power(self):
         """Load output in watts"""
-        return self.get_load_voltage() * self.get_load_current()
+        return self.retriable_read_long(0x310E, 4) / 100
 
-    def get_load_power_l(self):
-        """Load power L"""
-        return self.retriable_read_register(0x310E, 2, 4)
-
-    def get_load_power_h(self):
-        """Load power H"""
-        return self.retriable_read_register(0x310F, 2, 4)
-
-    def get_battery_current_l(self):
-        """Battery current L"""
-        return self.retriable_read_register(0x331B, 2, 4)
-
-    def get_battery_current_h(self):
-        """Battery current H"""
-        return self.retriable_read_register(0x331C, 2, 4)
+    def get_battery_current(self):
+        """Battery current in amps"""
+        return self.retriable_read_long(0x331B, 4) / 100
 
     def get_battery_voltage(self):
         """Battery voltage"""
         return self.retriable_read_register(0x331A, 2, 4)
+
+    def get_battery_power(self):
+        """Battery power in watts"""
+        return self.retriable_read_long(0x3106, 4) / 100
 
     def get_battery_state_of_charge(self):
         """Battery state of charge"""
