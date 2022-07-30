@@ -282,20 +282,35 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_battery_voltage_control_registers(self):
         """Returns all 12 battery voltage control settings"""
-        battery_voltage_control_register_values = self.retriable_read_registers(0x9003, 12, 3)
+        register_values = self.retriable_read_registers(0x9003, 12, 3)
         return {
-            register_name: battery_voltage_control_register_values[idx] / 100
+            register_name: register_values[idx] / 100
             for idx, register_name in enumerate(self.battery_voltage_control_register_names)
         }
 
     def set_battery_voltage_control_registers(self, **kwargs):
-        """Sets all 12 battery voltage control settings"""
+        """Sets all 12 battery voltage control settings
+        Inputs are keyword arguments
+        """
+        self.set_battery_voltage_control_registers_dict(kwargs)
+
+    def set_battery_voltage_control_registers_dict(self, kwargs):
+        """Sets all 12 battery voltage control settings
+        Inputs are a dict
+        """
         print("kwargs:", kwargs)
         if not len(kwargs):
-            raise TypeError("set_battery_voltage_control_registers() missing keyword arguments")
+            raise TypeError(
+                "set_battery_voltage_control_registers() missing keyword arguments"
+            )
 
-        if not all([kw_name in self.battery_voltage_control_register_names for kw_name in kwargs.keys()]):
-            raise TypeError("set_battery_voltage_control_registers() got an unexpected keyword argument")
+        if not all([
+            kw_key in self.battery_voltage_control_register_names
+            for kw_key in kwargs.keys()
+        ]):
+            raise TypeError(
+                "set_battery_voltage_control_registers() got an unexpected keyword argument"
+            )
 
         values_dict = self.get_battery_voltage_control_registers()
         print("values_dict(current):", values_dict)
