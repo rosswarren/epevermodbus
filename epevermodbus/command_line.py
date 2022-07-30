@@ -60,8 +60,9 @@ def main():
     print(
         f"Battery voltage control registers: {controller.get_battery_voltage_control_registers()}"
     )
-    controller.set_battery_voltage_control_registers()
-    controller.set_battery_voltage_control_registers(over_voltage_disconnect_voltage=14.7)
+    #controller.set_battery_voltage_control_registers()
+    controller.set_battery_voltage_control_registers(over_voltage_disconnect_voltage=14.6)
+    #controller.set_battery_voltage_control_registers(danger_high_voltage=14.6)
     print(
         f"Over voltage disconnect voltage: {controller.get_over_voltage_disconnect_voltage()}V"
     )
