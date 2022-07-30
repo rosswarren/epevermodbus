@@ -33,7 +33,7 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     @retry(wait_fixed=200, stop_max_attempt_number=5)
     def retriable_read_long(
-        self, registeraddress, functioncode, signed=False, byteorder=minimalmodbus.BYTEORDER_BIG
+        self, registeraddress, functioncode, signed=False, byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
     ):
         return self.read_long(
             registeraddress, functioncode, signed, byteorder

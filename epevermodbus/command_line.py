@@ -1,5 +1,4 @@
-#from epevermodbus.driver import EpeverChargeController
-from driver import EpeverChargeController
+from epevermodbus.driver import EpeverChargeController
 import argparse
 
 
@@ -22,8 +21,8 @@ def main():
     print(f"Load voltage: {controller.get_load_voltage()}V")
     print(f"Load current: {controller.get_load_current()}A")
     print(f"Load power: {controller.get_load_power()}W")
-    print(f"Battery current: {controller.get_battery_current()}A")
     print(f"Battery voltage: {controller.get_battery_voltage()}V")
+    print(f"Battery current: {controller.get_battery_current()}A")
     print(f"Battery power: {controller.get_battery_power()}W")
     print(f"Battery state of charge: {controller.get_battery_state_of_charge()}%")
     print(f"Battery temperature: {controller.get_battery_temperature()}°C")
@@ -34,7 +33,7 @@ def main():
     print(f"Battery status: {controller.get_battery_status()}")
     print(f"Charging equipment status: {controller.get_charging_equipment_status()}")
     print(
-        "Discharging equipment status:", controller.get_discharging_equipment_status()
+        f"Discharging equipment status: {controller.get_discharging_equipment_status()}"
     )
     print(f"Day time: {controller.is_day()}")
     print(f"Night time: {controller.is_night()}")
