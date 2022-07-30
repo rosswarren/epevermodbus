@@ -57,12 +57,11 @@ def main():
         "Temperature compensation coefficient:",
         controller.get_temperature_compensation_coefficient(),
     )
+    print(controller.battery_voltage_control_register_names)
     print(
         f"Battery voltage control registers: {controller.get_battery_voltage_control_registers()}"
     )
-    print(controller.battery_voltage_control_register_names)
-    controller.set_battery_voltage_control_registers(over_voltage_disconnect_voltage=14.7)
-    #controller.set_battery_voltage_control_registers(danger_high_voltage=14.6)
+    #controller.set_battery_voltage_control_registers(over_voltage_disconnect_voltage=14.7)
     print(
         f"Over voltage disconnect voltage: {controller.get_over_voltage_disconnect_voltage()}V"
     )
