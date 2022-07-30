@@ -1,4 +1,5 @@
-from epevermodbus.driver import EpeverChargeController
+#from epevermodbus.driver import EpeverChargeController
+from driver import EpeverChargeController
 import argparse
 
 
@@ -57,12 +58,17 @@ def main():
         controller.get_temperature_compensation_coefficient(),
     )
     print(
+        f"Battery voltage control registers: {controller.get_battery_voltage_control_registers()}"
+    )
+    controller.set_battery_voltage_control_registers()
+    controller.set_battery_voltage_control_registers(over_voltage_disconnect_voltage=14.7)
+    print(
         f"Over voltage disconnect voltage: {controller.get_over_voltage_disconnect_voltage()}V"
     )
     print(f"Charging limit voltage: {controller.get_charging_limit_voltage()}V")
     print(
         f"Over voltage reconnect voltage: {controller.get_over_voltage_reconnect_voltage()}V"
-    ),
+    )
     print(f"Equalize charging voltage: {controller.get_equalize_charging_voltage()}V")
     print(f"Boost charging voltage: {controller.get_boost_charging_voltage()}V")
     print(f"Float charging voltage: {controller.get_float_charging_voltage()}V")

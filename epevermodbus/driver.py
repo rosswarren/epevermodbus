@@ -32,6 +32,14 @@ class EpeverChargeController(minimalmodbus.Instrument):
         )
 
     @retry(wait_fixed=200, stop_max_attempt_number=5)
+    def retriable_read_registers(
+        self, registeraddress, number_of_registers, functioncode
+    ):
+        return self.read_registers(
+            registeraddress, number_of_registers, functioncode
+        )
+
+    @retry(wait_fixed=200, stop_max_attempt_number=5)
     def retriable_read_long(
         self, registeraddress, functioncode, signed=False, byteorder=minimalmodbus.BYTEORDER_LITTLE_SWAP
     ):
@@ -255,6 +263,67 @@ class EpeverChargeController(minimalmodbus.Instrument):
     def get_temperature_compensation_coefficient(self):
         """Temperature compensation coefficient"""
         return self.retriable_read_register(0x9002, 0, 3)
+
+    def get_battery_voltage_control_registers(self):
+        """Returns all 12 battery voltage control settings"""
+        register_names = [
+            "over_voltage_disconnect_voltage",
+            "charging_limit_voltage",
+            "over_voltage_reconnect_voltages",
+            "equalize_charging_voltage",
+            "boost_charging_voltage",
+            "float_charging_voltage",
+            "boost_reconnect_charging_voltage",
+            "low_voltage_reconnect_voltage",
+            "under_voltage_recover_voltage",
+            "under_voltage_warning_voltage",
+            "low_voltage_disconnect_voltage",
+            "discharging_limit_voltage"
+        ]
+        register_values = self.retriable_read_registers(0x9003, 12, 3)
+        return {
+            register_name: register_values[idx] / 100
+            for idx, register_name in enumerate(register_names)
+        }
+
+    def set_battery_voltage_control_registers(
+        self,
+        over_voltage_disconnect_voltage=None,
+        charging_limit_voltage=None,
+        over_voltage_reconnect_voltages=None,
+        equalize_charging_voltage=None,
+        boost_charging_voltage=None,
+        float_charging_voltage=None,
+        boost_reconnect_charging_voltage=None,
+        low_voltage_reconnect_voltage=None,
+        under_voltage_recover_voltage=None,
+        under_voltage_warning_voltage=None,
+        low_voltage_disconnect_voltage=None,
+        discharging_limit_voltage=None):
+        """Sets all 12 battery voltage control settings"""
+        register_values = [
+            over_voltage_disconnect_voltage,
+            charging_limit_voltage,
+            over_voltage_reconnect_voltages,
+            equalize_charging_voltage,
+            boost_charging_voltage,
+            float_charging_voltage,
+            boost_reconnect_charging_voltage,
+            low_voltage_reconnect_voltage,
+            under_voltage_recover_voltage,
+            under_voltage_warning_voltage,
+            low_voltage_disconnect_voltage,
+            discharging_limit_voltage
+        ]
+
+        if not any(register_values):
+            return
+
+        if not all(register_values):
+            # One or more values are missing and need to be read
+            current_values = self.get_battery_voltage_control_registers()
+
+        return
 
     def get_over_voltage_disconnect_voltage(self):
         """Over voltage disconnect voltage"""
