@@ -103,6 +103,10 @@ class EpeverChargeController(minimalmodbus.Instrument):
         """Battery power in watts"""
         return self.retriable_read_long(0x3106, 4) / 100
 
+    def get_battery_power(self):
+        """Battery power in watts"""
+        return self.retriable_read_long(0x3106, 4) / 100
+
     def get_battery_state_of_charge(self):
         """Battery state of charge"""
         return self.retriable_read_register(0x311A, 0, 4)
