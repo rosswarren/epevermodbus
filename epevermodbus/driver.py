@@ -1,7 +1,8 @@
 import minimalmodbus
 import serial
 from retrying import retry
-from epevermodbus.extract_bits import extract_bits
+#from epevermodbus.extract_bits import extract_bits
+from extract_bits import extract_bits
 
 
 class EpeverChargeController(minimalmodbus.Instrument):
@@ -93,15 +94,11 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_battery_current(self):
         """Battery current in amps"""
-        return self.retriable_read_long(0x331B, 4) / 100
+        return self.retriable_read_long(0x331B, 4, signed=True) / 100
 
     def get_battery_voltage(self):
         """Battery voltage"""
         return self.retriable_read_register(0x331A, 2, 4)
-
-    def get_battery_power(self):
-        """Battery power in watts"""
-        return self.retriable_read_long(0x3106, 4) / 100
 
     def get_battery_power(self):
         """Battery power in watts"""
