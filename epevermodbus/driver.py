@@ -1,8 +1,8 @@
 import minimalmodbus
 import serial
 from retrying import retry
-#from epevermodbus.extract_bits import extract_bits
-from extract_bits import extract_bits
+
+from epevermodbus.extract_bits import extract_bits
 
 
 class EpeverChargeController(minimalmodbus.Instrument):
@@ -28,7 +28,6 @@ class EpeverChargeController(minimalmodbus.Instrument):
         "low_voltage_disconnect_voltage",
         "discharging_limit_voltage"
     ]
-
 
     def __init__(self, portname, slaveaddress):
         minimalmodbus.Instrument.__init__(self, portname, slaveaddress)
@@ -289,40 +288,49 @@ class EpeverChargeController(minimalmodbus.Instrument):
             for idx, register_name in enumerate(self.battery_voltage_control_register_names)
         }
 
-    def set_battery_voltage_control_registers(self, **kwargs):
-        """Sets all 12 battery voltage control settings
-        Inputs are keyword arguments
+    def set_battery_voltage_control_registers(self, **kwargs: float):
+        """Sets from 1 to 12 battery voltage control settings
+
+        Args:
+        * keyword arguments (float)
+
+        The provided arguments must:
+        * have names in battery_voltage_control_register_names
+        * be one or more in number
         """
         self.set_battery_voltage_control_registers_dict(kwargs)
 
-    def set_battery_voltage_control_registers_dict(self, kwargs):
-        """Sets all 12 battery voltage control settings
-        Inputs are a dict
+    def set_battery_voltage_control_registers_dict(self, control_registers: dict):
+        """Sets from 1 to 12 battery voltage control settings
+
+        Args:
+        * control_registers (dict)
+
+        The provided dict must:
+        * have key names in battery_voltage_control_register_names
+        * have one or more key names.
         """
-        print("kwargs:", kwargs)
-        if not len(kwargs):
+        if not len(control_registers):
             raise TypeError(
                 "set_battery_voltage_control_registers() missing keyword arguments"
             )
 
         if not all([
             kw_key in self.battery_voltage_control_register_names
-            for kw_key in kwargs.keys()
+            for kw_key in control_registers.keys()
         ]):
             raise TypeError(
                 "set_battery_voltage_control_registers() got an unexpected keyword argument"
             )
 
         values_dict = self.get_battery_voltage_control_registers()
-        print("values_dict(current):", values_dict)
-        values_dict.update(kwargs)
-        print("values_dict(updated):", values_dict)
+        values_dict.update(control_registers)
 
         values = [
             int(values_dict[register_name] * 100)
             for register_name in self.battery_voltage_control_register_names
         ]
-        print(f"write_registers(values={values})")
+
         self.write_registers(0x9003, values)
         return
 
