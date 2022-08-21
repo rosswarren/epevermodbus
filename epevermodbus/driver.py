@@ -288,7 +288,7 @@ class EpeverChargeController(minimalmodbus.Instrument):
             for idx, register_name in enumerate(self.battery_voltage_control_register_names)
         }
 
-    def set_battery_voltage_control_registers(self, **kwargs: float):
+    def set_battery_voltage_control_registers(self, **kwargs):
         """Sets from 1 to 12 battery voltage control settings
 
         Args:
