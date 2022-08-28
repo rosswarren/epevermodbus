@@ -26,7 +26,7 @@ def main():
     battery_voltage_control_registers = {
         'over_voltage_disconnect_voltage': 14.7,
         'charging_limit_voltage': 14.6,
-        'over_voltage_reconnect_voltages': 14.6,
+        'over_voltage_reconnect_voltage': 14.6,
         'equalize_charging_voltage': 14.4,
         'boost_charging_voltage': 14.6,
         'float_charging_voltage': 13.6,

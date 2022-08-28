@@ -17,7 +17,7 @@ class EpeverChargeController(minimalmodbus.Instrument):
     battery_voltage_control_register_names = [
         "over_voltage_disconnect_voltage",
         "charging_limit_voltage",
-        "over_voltage_reconnect_voltages",
+        "over_voltage_reconnect_voltage",
         "equalize_charging_voltage",
         "boost_charging_voltage",
         "float_charging_voltage",
