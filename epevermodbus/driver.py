@@ -1,6 +1,7 @@
 import minimalmodbus
 import serial
 from retrying import retry
+
 from epevermodbus.extract_bits import extract_bits
 
 
@@ -12,6 +13,21 @@ class EpeverChargeController(minimalmodbus.Instrument):
         * slaveaddress (int): slave address in the range 1 to 247
 
     """
+
+    battery_voltage_control_register_names = [
+        "over_voltage_disconnect_voltage",
+        "charging_limit_voltage",
+        "over_voltage_reconnect_voltage",
+        "equalize_charging_voltage",
+        "boost_charging_voltage",
+        "float_charging_voltage",
+        "boost_reconnect_charging_voltage",
+        "low_voltage_reconnect_voltage",
+        "under_voltage_recover_voltage",
+        "under_voltage_warning_voltage",
+        "low_voltage_disconnect_voltage",
+        "discharging_limit_voltage"
+    ]
 
     def __init__(self, portname, slaveaddress):
         minimalmodbus.Instrument.__init__(self, portname, slaveaddress)
@@ -29,6 +45,14 @@ class EpeverChargeController(minimalmodbus.Instrument):
     ):
         return self.read_register(
             registeraddress, number_of_decimals, functioncode, False
+        )
+
+    @retry(wait_fixed=200, stop_max_attempt_number=5)
+    def retriable_read_registers(
+        self, registeraddress, number_of_registers, functioncode
+    ):
+        return self.read_registers(
+            registeraddress, number_of_registers, functioncode
         )
 
     @retry(wait_fixed=200, stop_max_attempt_number=5)
@@ -69,7 +93,7 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_battery_current(self):
         """Battery current in amps"""
-        return self.retriable_read_long(0x331B, 4) / 100
+        return self.retriable_read_long(0x331B, 4, signed=True) / 100
 
     def get_battery_voltage(self):
         """Battery voltage"""
@@ -255,6 +279,60 @@ class EpeverChargeController(minimalmodbus.Instrument):
     def get_temperature_compensation_coefficient(self):
         """Temperature compensation coefficient"""
         return self.retriable_read_register(0x9002, 0, 3)
+
+    def get_battery_voltage_control_registers(self):
+        """Returns all 12 battery voltage control settings"""
+        register_values = self.retriable_read_registers(0x9003, 12, 3)
+        return {
+            register_name: register_values[idx] / 100
+            for idx, register_name in enumerate(self.battery_voltage_control_register_names)
+        }
+
+    def set_battery_voltage_control_registers(self, **kwargs):
+        """Sets from 1 to 12 battery voltage control settings
+
+        Args:
+        * keyword arguments (float)
+
+        The provided arguments must:
+        * have names in battery_voltage_control_register_names
+        * be one or more in number
+        """
+        self.set_battery_voltage_control_registers_dict(kwargs)
+
+    def set_battery_voltage_control_registers_dict(self, control_registers: dict):
+        """Sets from 1 to 12 battery voltage control settings
+
+        Args:
+        * control_registers (dict)
+
+        The provided dict must:
+        * have key names in battery_voltage_control_register_names
+        * have one or more key names.
+        """
+        if not len(control_registers):
+            raise TypeError(
+                "set_battery_voltage_control_registers() missing keyword arguments"
+            )
+
+        if not all([
+            kw_key in self.battery_voltage_control_register_names
+            for kw_key in control_registers.keys()
+        ]):
+            raise TypeError(
+                "set_battery_voltage_control_registers() got an unexpected keyword argument"
+            )
+
+        values_dict = self.get_battery_voltage_control_registers()
+        values_dict.update(control_registers)
+
+        values = [
+            int(values_dict[register_name] * 100)
+            for register_name in self.battery_voltage_control_register_names
+        ]
+
+        self.write_registers(0x9003, values)
+        return
 
     def get_over_voltage_disconnect_voltage(self):
         """Over voltage disconnect voltage"""

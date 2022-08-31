@@ -1,5 +1,6 @@
-from epevermodbus.driver import EpeverChargeController
 import argparse
+
+from epevermodbus.driver import EpeverChargeController
 
 
 def main():
@@ -24,14 +25,17 @@ def main():
     print(f"Battery voltage: {controller.get_battery_voltage()}V")
     print(f"Battery current: {controller.get_battery_current()}A")
     print(f"Battery power: {controller.get_battery_power()}W")
-    print(f"Battery state of charge: {controller.get_battery_state_of_charge()}%")
+    print(
+        f"Battery state of charge: {controller.get_battery_state_of_charge()}%")
     print(f"Battery temperature: {controller.get_battery_temperature()}°C")
     print(
         f"Remote battery temperature: {controller.get_remote_battery_temperature()}°C"
     )
-    print(f"Controller temperature: {controller.get_controller_temperature()}°C")
+    print(
+        f"Controller temperature: {controller.get_controller_temperature()}°C")
     print(f"Battery status: {controller.get_battery_status()}")
-    print(f"Charging equipment status: {controller.get_charging_equipment_status()}")
+    print(
+        f"Charging equipment status: {controller.get_charging_equipment_status()}")
     print(
         f"Discharging equipment status: {controller.get_discharging_equipment_status()}"
     )
@@ -43,29 +47,42 @@ def main():
     print(
         f"Minimum battery voltage today: {controller.get_minimum_battery_voltage_today()}V"
     )
-    print(f"Device over temperature: {controller.is_device_over_temperature()}")
+    print(
+        f"Device over temperature: {controller.is_device_over_temperature()}")
     print("\n")
 
     print("Battery Parameters:")
-    print(f"Rated charging current: {controller.get_rated_charging_current()}A")
+    print(
+        f"Rated charging current: {controller.get_rated_charging_current()}A")
     print(f"Rated load current: {controller.get_rated_load_current()}A")
-    print(f"Battery real rated voltage: {controller.get_battery_real_rated_voltage()}V")
+    print(
+        f"Battery real rated voltage: {controller.get_battery_real_rated_voltage()}V")
     print(f"Battery type: {controller.get_battery_type()}")
     print(f"Battery capacity: {controller.get_battery_capacity()}AH")
     print(
         "Temperature compensation coefficient:",
         controller.get_temperature_compensation_coefficient(),
     )
+    print("Battery Voltage Control Register Names:",
+          controller.battery_voltage_control_register_names)
+    print(
+        f"Battery voltage control registers: {controller.get_battery_voltage_control_registers()}"
+    )
+    # controller.set_battery_voltage_control_registers(over_voltage_disconnect_voltage=14.7)
     print(
         f"Over voltage disconnect voltage: {controller.get_over_voltage_disconnect_voltage()}V"
     )
-    print(f"Charging limit voltage: {controller.get_charging_limit_voltage()}V")
+    print(
+        f"Charging limit voltage: {controller.get_charging_limit_voltage()}V")
     print(
         f"Over voltage reconnect voltage: {controller.get_over_voltage_reconnect_voltage()}V"
-    ),
-    print(f"Equalize charging voltage: {controller.get_equalize_charging_voltage()}V")
-    print(f"Boost charging voltage: {controller.get_boost_charging_voltage()}V")
-    print(f"Float charging voltage: {controller.get_float_charging_voltage()}V")
+    )
+    print(
+        f"Equalize charging voltage: {controller.get_equalize_charging_voltage()}V")
+    print(
+        f"Boost charging voltage: {controller.get_boost_charging_voltage()}V")
+    print(
+        f"Float charging voltage: {controller.get_float_charging_voltage()}V")
     print(
         f"Boost reconnect charging voltage: {controller.get_boost_reconnect_charging_voltage()}V"
     ),
@@ -81,7 +98,8 @@ def main():
     print(
         f"Low voltage disconnect voltage: {controller.get_low_voltage_disconnect_voltage()}V"
     )
-    print(f"Discharging limit voltage: {controller.get_discharging_limit_voltage()}V")
+    print(
+        f"Discharging limit voltage: {controller.get_discharging_limit_voltage()}V")
     print(f"Battery rated voltage: {controller.get_battery_rated_voltage()}")
     print(
         "Default load on/off in manual mode:",
