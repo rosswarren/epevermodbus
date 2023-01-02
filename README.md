@@ -28,7 +28,7 @@ On Windows you can use the driver provided by EPever and the cable should work f
 
 You can quite easily make your own cable if you purchase a few parts, and with this approach you won't need a custom driver on Linux so it should be easier to get working. The device should show up as something like `/dev/ttyUSB0`.
 
-For more information read: https://tomato.solar/2021/08/14/building-a-cable-to-connect-my-epever-charge-controller/
+For more information read: https://ross-warren.co.uk/2021/08/14/building-a-cable-to-connect-my-epever-charge-controller/
 
 ## Installing the package
 
