@@ -41,10 +41,10 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     @retry(wait_fixed=200, stop_max_attempt_number=5)
     def retriable_read_register(
-        self, registeraddress, number_of_decimals, functioncode
+        self, registeraddress, number_of_decimals, functioncode, signed=False
     ):
         return self.read_register(
-            registeraddress, number_of_decimals, functioncode, False
+            registeraddress, number_of_decimals, functioncode, signed
         )
 
     @retry(wait_fixed=200, stop_max_attempt_number=5)
@@ -109,15 +109,15 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_battery_temperature(self):
         """battery temperature"""
-        return self.retriable_read_register(0x3110, 2, 4)
+        return self.retriable_read_register(0x3110, 2, 4, signed=True)
 
     def get_remote_battery_temperature(self):
         """The battery temperature measured by remote temperature sensor"""
-        return self.retriable_read_register(0x311B, 2, 4)
+        return self.retriable_read_register(0x311B, 2, 4, signed=True)
 
     def get_controller_temperature(self):
         """Temperature inside equipment"""
-        return self.retriable_read_register(0x3111, 2, 4)
+        return self.retriable_read_register(0x3111, 2, 4, signed=True)
 
     def get_battery_status(self):
         """Battery status"""
