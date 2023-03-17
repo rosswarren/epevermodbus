@@ -67,6 +67,14 @@ class EpeverChargeController(minimalmodbus.Instrument):
     def retriable_read_bit(self, registeraddress, functioncode):
         return self.read_bit(registeraddress, functioncode)
 
+    def get_manual_control_load(self):
+        """bit of manual control load"""
+        return self.retriable_read_bit(0x2, 1)
+
+    def get_force_load_on_off(self):
+        """force load on off status"""
+        return self.retriable_read_bit(0x6, 1)
+    
     def get_solar_voltage(self):
         """PV array input in volts"""
         return self.retriable_read_register(0x3100, 2, 4)
