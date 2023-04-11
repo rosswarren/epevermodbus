@@ -11,9 +11,13 @@ def main():
     parser.add_argument(
         "--slaveaddress", help="Slave address 1-247", default=1, type=int
     )
+
+    parser.add_argument(
+        "--baudrate", help="Baudrate to communicate with controller (default is 115200)", default=115200, type=int
+    )
     args = parser.parse_args()
 
-    controller = EpeverChargeController(args.portname, args.slaveaddress)
+    controller = EpeverChargeController(args.portname, args.slaveaddress, args.baudrate)
 
     print("Real Time Data")
     print(f"Solar voltage: {controller.get_solar_voltage()}V")

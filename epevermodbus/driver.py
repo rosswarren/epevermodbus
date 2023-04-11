@@ -11,6 +11,7 @@ class EpeverChargeController(minimalmodbus.Instrument):
     Args:
         * portname (str): port name
         * slaveaddress (int): slave address in the range 1 to 247
+        * baudrate (int): baudrate to communicate with controller (default is 115200)
 
     """
 
@@ -29,9 +30,9 @@ class EpeverChargeController(minimalmodbus.Instrument):
         "discharging_limit_voltage"
     ]
 
-    def __init__(self, portname, slaveaddress):
+    def __init__(self, portname, slaveaddress, baudrate=115200):
         minimalmodbus.Instrument.__init__(self, portname, slaveaddress)
-        self.serial.baudrate = 115200
+        self.serial.baudrate = baudrate
         self.serial.bytesize = 8
         self.serial.parity = serial.PARITY_NONE
         self.serial.stopbits = 1

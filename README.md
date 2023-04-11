@@ -63,6 +63,7 @@ optional arguments:
   --portname PORTNAME   Port name for example /dev/ttyUSB0
   --slaveaddress SLAVEADDRESS
                         Slave address 1-247
+  --baudrate BAUDRATE   Baudrate to communicate with controller (default is 115200)
 ```
 
 Example output
