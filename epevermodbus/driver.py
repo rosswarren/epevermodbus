@@ -435,3 +435,11 @@ class EpeverChargeController(minimalmodbus.Instrument):
         return {0: "VOLTAGE_COMPENSATION", 1: "SOC"}[
             self.retriable_read_register(0x9070, 0, 3)
         ]
+
+    def get_total_consumed_energy(self):
+        """Total consumed energy"""
+        return self.retriable_read_long(0x330A, 4) / 100
+
+    def get_total_generated_energy(self):
+        """Total generated energy"""
+        return self.retriable_read_long(0x3312, 4) / 100
