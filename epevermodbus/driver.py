@@ -443,3 +443,35 @@ class EpeverChargeController(minimalmodbus.Instrument):
     def get_total_generated_energy(self):
         """Total generated energy"""
         return self.retriable_read_long(0x3312, 4) / 100
+
+    def get_maximum_pv_voltage_today(self):
+        """Maximum PV voltage today"""
+        return self.retriable_read_register(0x3300, 2, 4)
+
+    def get_minimum_pv_voltage_today(self):
+        """Minimum PV voltage today"""
+        return self.retriable_read_register(0x3301, 2, 4)
+
+    def get_consumed_energy_today(self):
+        """Consumed energy today"""
+        return self.retriable_read_long(0x3304, 4) / 100
+
+    def get_consumed_energy_this_month(self):
+        """Consumed energy this month"""
+        return self.retriable_read_long(0x3306, 4) / 100
+
+    def get_consumed_energy_this_year(self):
+        """Consumed energy this year"""
+        return self.retriable_read_long(0x3308, 4) / 100
+
+    def get_generated_energy_today(self):
+        """Generated energy today"""
+        return self.retriable_read_long(0x330C, 4) / 100
+
+    def get_generated_energy_this_month(self):
+        """Generated energy this month"""
+        return self.retriable_read_long(0x330E, 4) / 100
+
+    def get_generated_energy_this_year(self):
+        """Generated energy this year"""
+        return self.retriable_read_long(0x3310, 4) / 100
