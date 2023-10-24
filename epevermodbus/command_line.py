@@ -18,6 +18,7 @@ def main():
     )
 
     parser.add_argument("--set-time", help="Set the RTC of the MPPT and exit", action="store_true")
+    parser.add_argument("--set-battery-capacity", help="Set the battery capacity in Ah an exit", type=int)
     parser.add_argument(
         "--set-battery-temp-comp-coeff",
         help="Sets the batteries temperature compensation coefficient. Coefficient is in mV/°C/Cell without the sign",
@@ -32,6 +33,11 @@ def main():
         controller.set_rtc(datetime.datetime.now())
         print(f"New RTC value: {controller.get_rtc()}")
 
+    if args.set_battery_capacity:
+        print(f"Old capacity: {controller.get_battery_capacity()}AH")
+        controller.set_battery_capacity(args.set_battery_capacity)
+        print(f"New capacity: {controller.get_battery_capacity()}AH")
+
     if args.set_battery_temp_comp_coeff:
         print(
             "Old Temperature compensation coefficient: "
@@ -45,6 +51,7 @@ def main():
 
     if any([
         args.set_time,
+        args.set_battery_capacity,
         args.set_battery_temp_comp_coeff,
     ]):
         exit(0)
