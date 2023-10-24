@@ -18,6 +18,11 @@ def main():
     )
 
     parser.add_argument("--set-time", help="Set the RTC of the MPPT and exit", action="store_true")
+    parser.add_argument(
+        "--set-battery-temp-comp-coeff",
+        help="Sets the batteries temperature compensation coefficient. Coefficient is in mV/°C/Cell without the sign",
+        type=float,
+    )
     args = parser.parse_args()
 
     controller = EpeverChargeController(args.portname, args.slaveaddress, args.baudrate)
@@ -26,6 +31,22 @@ def main():
         print(f"Old RTC value: {controller.get_rtc()}")
         controller.set_rtc(datetime.datetime.now())
         print(f"New RTC value: {controller.get_rtc()}")
+
+    if args.set_battery_temp_comp_coeff:
+        print(
+            "Old Temperature compensation coefficient: "
+            f"{controller.get_temperature_compensation_coefficient()}mV/°C/Cell"
+        )
+        controller.set_temperature_compensation_coefficient(args.set_battery_temp_comp_coeff)
+        print(
+            "New Temperature compensation coefficient: "
+            f"{controller.get_temperature_compensation_coefficient()}mV/°C/Cell"
+        )
+
+    if any([
+        args.set_time,
+        args.set_battery_temp_comp_coeff,
+    ]):
         exit(0)
 
     print("Real Time Data")
