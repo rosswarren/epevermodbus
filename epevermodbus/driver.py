@@ -293,7 +293,7 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_temperature_compensation_coefficient(self):
         """Temperature compensation coefficient"""
-        return self.retriable_read_register(0x9002, 0, 3)
+        return self.retriable_read_register(0x9002, 2, 3)
 
     def get_battery_voltage_control_registers(self):
         """Returns all 12 battery voltage control settings"""
