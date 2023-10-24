@@ -74,8 +74,8 @@ def main():
     print(f"Battery type: {controller.get_battery_type()}")
     print(f"Battery capacity: {controller.get_battery_capacity()}AH")
     print(
-        "Temperature compensation coefficient:",
-        controller.get_temperature_compensation_coefficient(),
+        "Temperature compensation coefficient: "
+        f"{controller.get_temperature_compensation_coefficient()}mV/°C/Cell"
     )
     print("Battery Voltage Control Register Names:",
           controller.battery_voltage_control_register_names)
