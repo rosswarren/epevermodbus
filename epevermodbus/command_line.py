@@ -1,4 +1,5 @@
 import argparse
+import datetime
 
 from epevermodbus.driver import EpeverChargeController
 
@@ -15,9 +16,45 @@ def main():
     parser.add_argument(
         "--baudrate", help="Baudrate to communicate with controller (default is 115200)", default=115200, type=int
     )
+
+    parser.add_argument("--set-time", help="Set the RTC of the MPPT and exit", action="store_true")
+    parser.add_argument("--set-battery-capacity", help="Set the battery capacity in Ah an exit", type=int)
+    parser.add_argument(
+        "--set-battery-temp-comp-coeff",
+        help="Sets the batteries temperature compensation coefficient. Coefficient is in mV/°C/Cell without the sign",
+        type=float,
+    )
     args = parser.parse_args()
 
     controller = EpeverChargeController(args.portname, args.slaveaddress, args.baudrate)
+
+    if args.set_time:
+        print(f"Old RTC value: {controller.get_rtc()}")
+        controller.set_rtc(datetime.datetime.now())
+        print(f"New RTC value: {controller.get_rtc()}")
+
+    if args.set_battery_capacity:
+        print(f"Old capacity: {controller.get_battery_capacity()}AH")
+        controller.set_battery_capacity(args.set_battery_capacity)
+        print(f"New capacity: {controller.get_battery_capacity()}AH")
+
+    if args.set_battery_temp_comp_coeff:
+        print(
+            "Old Temperature compensation coefficient: "
+            f"{controller.get_temperature_compensation_coefficient()}mV/°C/Cell"
+        )
+        controller.set_temperature_compensation_coefficient(args.set_battery_temp_comp_coeff)
+        print(
+            "New Temperature compensation coefficient: "
+            f"{controller.get_temperature_compensation_coefficient()}mV/°C/Cell"
+        )
+
+    if any([
+        args.set_time,
+        args.set_battery_capacity,
+        args.set_battery_temp_comp_coeff,
+    ]):
+        exit(0)
 
     print("Real Time Data")
     print(f"Solar voltage: {controller.get_solar_voltage()}V")
@@ -53,6 +90,7 @@ def main():
     )
     print(
         f"Device over temperature: {controller.is_device_over_temperature()}")
+    print(f"Current device time: {controller.get_rtc()}")
     print("\n")
 
     print("Battery Parameters:")
@@ -64,8 +102,8 @@ def main():
     print(f"Battery type: {controller.get_battery_type()}")
     print(f"Battery capacity: {controller.get_battery_capacity()}AH")
     print(
-        "Temperature compensation coefficient:",
-        controller.get_temperature_compensation_coefficient(),
+        "Temperature compensation coefficient: "
+        f"{controller.get_temperature_compensation_coefficient()}mV/°C/Cell"
     )
     print("Battery Voltage Control Register Names:",
           controller.battery_voltage_control_register_names)
