@@ -1,3 +1,5 @@
+import datetime
+
 import minimalmodbus
 import serial
 from retrying import retry
@@ -289,9 +291,17 @@ class EpeverChargeController(minimalmodbus.Instrument):
         """Battery capacity in amp hours"""
         return self.retriable_read_register(0x9001, 0, 3)
 
+    def set_battery_capacity(self, capacity: int):
+        """Set Battery capacity in amp hours"""
+        return self.write_register(0x9001, capacity)
+
     def get_temperature_compensation_coefficient(self):
         """Temperature compensation coefficient"""
-        return self.retriable_read_register(0x9002, 0, 3)
+        return self.retriable_read_register(0x9002, 2, 3)
+
+    def set_temperature_compensation_coefficient(self, coefficient: float):
+        """Set the Temperature compensation coefficient"""
+        return self.write_register(0x9002, coefficient*100)
 
     def get_battery_voltage_control_registers(self):
         """Returns all 12 battery voltage control settings"""
@@ -475,3 +485,41 @@ class EpeverChargeController(minimalmodbus.Instrument):
     def get_generated_energy_this_year(self):
         """Generated energy this year"""
         return self.retriable_read_long(0x3310, 4) / 100
+
+    def get_rtc(self):
+        """
+        Reads the RTC.
+        :return: datetime.datetime if successful
+                 None otherwise
+        """
+
+        reg_ms = self.retriable_read_register(0x9013, 0, 3)
+        second = extract_bits(reg_ms, 0, 0b1111_1111)
+        minute = extract_bits(reg_ms, 8, 0b1111_1111)
+
+        reg_hd = self.retriable_read_register(0x9014, 0, 3)
+        hour = extract_bits(reg_hd, 0, 0b1111_1111)
+        day = extract_bits(reg_hd, 8, 0b1111_1111)
+
+        reg_my = self.retriable_read_register(0x9015, 0, 3)
+        month = extract_bits(reg_my, 0, 0b1111_1111)
+        year = extract_bits(reg_my, 8, 0b1111_1111)+2000
+
+        try:
+            dt = datetime.datetime(year, month, day, hour, minute, second)
+        except ValueError:
+            dt = None
+        return dt
+
+    def set_rtc(self, new_time: datetime.datetime):
+        """
+        Set the RTC
+        :param new_time: The new value to set.
+        :return: None
+        """
+
+        reg_ms = new_time.second + (new_time.minute << 8)
+        reg_hd = new_time.hour + (new_time.day << 8)
+        reg_my = new_time.month + ((new_time.year-2000) << 8)
+
+        self.write_registers(0x9013, [reg_ms, reg_hd, reg_my])
