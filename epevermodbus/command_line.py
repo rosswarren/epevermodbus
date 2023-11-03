@@ -88,8 +88,18 @@ def main():
     print(
         f"Minimum battery voltage today: {controller.get_minimum_battery_voltage_today()}V"
     )
+    print(f"Maximum PV voltage today: {controller.get_maximum_pv_voltage_today()}V")
+    print(f"Minimum PV voltage today: {controller.get_minimum_pv_voltage_today()}V")
     print(
         f"Device over temperature: {controller.is_device_over_temperature()}")
+    print(f"Consumed energy today: {controller.get_consumed_energy_today()}kWh")
+    print(f"Consumed energy this month: {controller.get_consumed_energy_this_month()}kWh")
+    print(f"Consumed energy this year: {controller.get_consumed_energy_this_year()}kWh")
+    print(f"Total consumed energy: {controller.get_total_consumed_energy()}kWh")
+    print(f"Generated energy today: {controller.get_generated_energy_today()}kWh")
+    print(f"Generated energy this month: {controller.get_generated_energy_this_month()}kWh")
+    print(f"Generated energy this year: {controller.get_generated_energy_this_year()}kWh")
+    print(f"Total generated energy: {controller.get_total_generated_energy()}kWh")
     print(f"Current device time: {controller.get_rtc()}")
     print("\n")
 
