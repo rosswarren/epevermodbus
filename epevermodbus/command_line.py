@@ -1,5 +1,6 @@
 import argparse
 import datetime
+import json
 
 from epevermodbus.driver import EpeverChargeController
 
@@ -121,7 +122,7 @@ def main():
         output["battery_discharge"] = controller.get_battery_discharge()
         output["battery_charge"] = controller.get_battery_charge()
         output["charging_mode"] = controller.get_charging_mode()
-        print(output)
+        print(json.dumps(output))
     else:
         print("Real Time Data")
         print(f"Solar voltage: {controller.get_solar_voltage()}V")
