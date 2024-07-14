@@ -26,6 +26,66 @@ def main():
         help="Sets the batteries temperature compensation coefficient. Coefficient is in mV/°C/Cell without the sign",
         type=float,
     )
+    parser.add_argument(
+        "--set-over-voltage-disconnect-voltage",
+        help="Set the over-voltage disconnect voltage and exit",
+        type=float
+    )
+    parser.add_argument(
+        "--set-over-voltage-reconnect-voltage",
+        help="Set the over-voltage reconnect voltage and exit",
+        type=float
+    )
+    parser.add_argument(
+        "--set-charging-limit-voltage",
+        help="Set the charging voltage limit and exit",
+        type=float
+    )
+    parser.add_argument(
+        "--set-discharging-limit-voltage",
+        help="Set the discharging limit voltage and exit",
+        type=float
+    )
+    parser.add_argument(
+        "--set-boost-charging-voltage",
+        help="Set the boost charging voltage and exit",
+        type=float
+    )
+    parser.add_argument(
+        "--set-boost-reconnect-charging-voltage",
+        help="Set the boost reconnect charging voltage and exit",
+        type=float
+    )
+    parser.add_argument(
+        "--set-equalize-charging-voltage",
+        help="Set the equalize charging voltage and exit",
+        type=float
+    )
+    parser.add_argument(
+        "--set-float-charging-voltage",
+        help="Set the float charging voltage and exit",
+        type=float
+    )
+    parser.add_argument(
+        "--set-low-voltage-disconnect-voltage",
+        help="Set the low-voltage disconnect voltage and exit",
+        type=float
+    )
+    parser.add_argument(
+        "--set-low-voltage-reconnect-voltage",
+        help="Set the low voltage reconnect voltage and exit",
+        type=float
+    )
+    parser.add_argument(
+        "--set-under-voltage-warning-voltage",
+        help="Set the under-voltage warning voltage and exit",
+        type=float
+    )
+    parser.add_argument(
+        "--set-under-voltage-recover-voltage",
+        help="Set the under-voltage recover voltage and exit",
+        type=float
+    )
     args = parser.parse_args()
 
     controller = EpeverChargeController(args.portname, args.slaveaddress, args.baudrate)
@@ -51,10 +111,102 @@ def main():
             f"{controller.get_temperature_compensation_coefficient()}mV/°C/Cell"
         )
 
+    if args.set_over_voltage_disconnect_voltage:
+        print(f"Old over-voltage disconnect voltage: {controller.get_over_voltage_disconnect_voltage()}V")
+        controller.set_battery_voltage_control_registers(
+                over_voltage_disconnect_voltage=args.set_over_voltage_disconnect_voltage
+        )
+        print(f"New over-voltage disconnect voltage: {controller.get_over_voltage_disconnect_voltage()}V")
+
+    if args.set_over_voltage_reconnect_voltage:
+        print(f"Old over-voltage reconnect voltage: {controller.get_over_voltage_reconnect_voltage()}V")
+        controller.set_battery_voltage_control_registers(
+            over_voltage_reconnect_voltage=args.set_over_voltage_reconnect_voltage
+        )
+        print(f"New over-voltage reconnect voltage: {controller.get_over_voltage_reconnect_voltage()}V")
+
+    if args.set_charging_limit_voltage:
+        print(f"Old charging limit voltage: {controller.get_charging_limit_voltage()}V")
+        controller.set_battery_voltage_control_registers(
+            charging_limit_voltage=args.set_charging_limit_voltage
+        )
+        print(f"New charging limit voltage: {controller.get_charging_limit_voltage()}V")
+
+    if args.set_discharging_limit_voltage:
+        print(f"Old discharging limit voltage: {controller.get_discharging_limit_voltage()}V")
+        controller.set_battery_voltage_control_registers(
+            discharging_limit_voltage=args.set_discharging_limit_voltage
+        )
+        print(f"New discharging limit voltage: {controller.get_discharging_limit_voltage()}V")
+
+    if args.set_boost_charging_voltage:
+        print(f"Old boost charging voltage: {controller.get_boost_charging_voltage()}V")
+        controller.set_battery_voltage_control_registers(boost_charging_voltage=args.set_boost_charging_voltage)
+        print(f"New boost charging voltage: {controller.get_boost_charging_voltage()}V")
+
+    if args.set_boost_reconnect_charging_voltage:
+        print(f"Old boost reconnect charging voltage: {controller.get_boost_reconnect_charging_voltage()}V")
+        controller.set_battery_voltage_control_registers(
+            boost_reconnect_charging_voltage=args.set_boost_reconnect_charging_voltage
+        )
+        print(f"New boost reconnect charging voltage: {controller.get_boost_reconnect_charging_voltage()}V")
+
+    if args.set_equalize_charging_voltage:
+        print(f"Old equalize charging voltage: {controller.get_equalize_charging_voltage()}V")
+        controller.set_battery_voltage_control_registers(
+            equalize_charging_voltage=args.set_equalize_charging_voltage
+        )
+        print(f"New equalize charging voltage: {controller.get_equalize_charging_voltage()}V")
+
+    if args.set_float_charging_voltage:
+        print(f"Old float charging voltage: {controller.get_float_charging_voltage()}V")
+        controller.set_battery_voltage_control_registers(float_charging_voltage=args.set_float_charging_voltage)
+        print(f"New float charging voltage: {controller.get_float_charging_voltage()}V")
+
+    if args.set_low_voltage_disconnect_voltage:
+        print(f"Old low-voltage disconnect voltage: {controller.get_low_voltage_disconnect_voltage()}V")
+        controller.set_battery_voltage_control_registers(
+            low_voltage_disconnect_voltage=args.set_low_voltage_disconnect_voltage
+        )
+        print(f"New low-voltage disconnect voltage: {controller.get_low_voltage_disconnect_voltage()}V")
+
+    if args.set_low_voltage_reconnect_voltage:
+        print(f"Old low-voltage reconnect voltage: {controller.get_low_voltage_reconnect_voltage()}V")
+        controller.set_battery_voltage_control_registers(
+            low_voltage_reconnect_voltage=args.set_low_voltage_reconnect_voltage
+        )
+        print(f"New low-voltage reconnect voltage: {controller.get_low_voltage_reconnect_voltage()}V")
+
+    if args.set_under_voltage_warning_voltage:
+        print(f"Old under-voltage warning voltage: {controller.get_under_voltage_warning_voltage()}V")
+        controller.set_battery_voltage_control_registers(
+            under_voltage_warning_voltage=args.set_under_voltage_warning_voltage
+        )
+        print(f"New under-voltage warning voltage: {controller.get_under_voltage_warning_voltage()}V")
+
+    if args.set_under_voltage_recover_voltage:
+        print(f"Old under-voltage recover voltage: {controller.get_under_voltage_recover_voltage()}V")
+        controller.set_battery_voltage_control_registers(
+            under_voltage_recover_voltage=args.set_under_voltage_recover_voltage
+        )
+        print(f"New under-voltage recover voltage: {controller.get_under_voltage_recover_voltage()}V")
+
     if any([
         args.set_time,
         args.set_battery_capacity,
         args.set_battery_temp_comp_coeff,
+        args.set_over_voltage_disconnect_voltage,
+        args.set_over_voltage_reconnect_voltage,
+        args.set_charging_limit_voltage,
+        args.set_discharging_limit_voltage,
+        args.set_boost_charging_voltage,
+        args.set_boost_reconnect_charging_voltage,
+        args.set_equalize_charging_voltage,
+        args.set_float_charging_voltage,
+        args.set_low_voltage_disconnect_voltage,
+        args.set_low_voltage_reconnect_voltage,
+        args.set_under_voltage_warning_voltage,
+        args.set_under_voltage_recover_voltage,
     ]):
         exit(0)
 
