@@ -4,37 +4,66 @@ This package is intended to help you communicate with an EPever charge controlle
 
 ![image](https://user-images.githubusercontent.com/613642/128763284-c5bbe67b-3905-479a-8a90-b1db16ff59fb.png)
 
+## Project Overview
+
+A Python library for communicating with EPEver charge controllers via Modbus protocol. This package provides a comprehensive interface for reading real-time data, managing battery parameters, and controlling EPEver solar charge controllers.
+
 ## Features
 * Read real time data
 * Read battery parameters
-* Write battery parameters _this feature is a work in progress_
+* Write battery parameters
 * Automatic retries
+* Comprehensive error handling
+* Command-line interface for quick diagnostics
+
+## File Structure
+```
+epevermodbus/
+├── epevermodbus/
+│   ├── __init__.py           # Package initialization
+│   ├── command_line.py       # CLI interface implementation
+│   ├── driver.py             # Main controller interface
+│   └── extract_bits.py       # Utility for bit manipulation
+├── examples/
+│   └── write_battery_params.py  # Example for battery parameter configuration
+├── test/
+│   ├── __init__.py
+│   └── test_extract_bits.py  # Unit tests for bit extraction
+├── LICENSE                   # MIT License
+├── README.md                # Project documentation
+├── requirements.txt         # Project dependencies
+└── setup.py                # Package configuration
+```
 
 ## Connecting to the charge controller
 
 I have only tested this package on Linux / Raspberry Pi but I see no reason why it should not work on other devices.
 
-For the cable you have two options
+For the cable you have two options:
 
-* Official EPever cable
+### 1. Official EPever cable
 
 ![image](https://user-images.githubusercontent.com/613642/128763357-c88e8ef6-481c-470f-9ca3-40dd7cf85914.png)
 
-When using the offical cable on Linux your device will show up something like `/dev/ttyXRUSB0`. You will need to use a custom driver to use this cable on Linux rather than the bundled cdc-acm driver. It can be difficult to get this driver working properly on Linux and Raspberry Pi.
+When using the official cable on Linux your device will show up something like `/dev/ttyXRUSB0`. You will need to use a custom driver to use this cable on Linux rather than the bundled cdc-acm driver. It can be difficult to get this driver working properly on Linux and Raspberry Pi.
 
 On Windows you can use the driver provided by EPever and the cable should work fine so long as you check the rs485 checkbox in device manager.
 
-* Your own custom cable
+### 2. Custom cable (Recommended for Linux)
 
 You can quite easily make your own cable if you purchase a few parts, and with this approach you won't need a custom driver on Linux so it should be easier to get working. The device should show up as something like `/dev/ttyUSB0`.
 
 For more information read: https://ross-warren.co.uk/2021/08/14/building-a-cable-to-connect-my-epever-charge-controller/
 
-## Installing the package
+## Installation
 
+### Requirements
+* Python 3.x
+* minimalmodbus
+* retrying
+* Serial port access (USB or RS485)
 
-
-To install the package run
+To install the package run:
 
 ```sh
 pip install epevermodbus
@@ -46,17 +75,25 @@ This package requires Python 3, depending on your setup you might have to instea
 pip3 install epevermodbus
 ```
 
+For development installation:
+```bash
+git clone https://github.com/rosswarren/epevermodbus
+cd epevermodbus
+pip install -e .
+```
 
-## Command line utility
+## Usage
+
+### Command Line Interface
 
 To run the command line utility and see the debug output run the following on the command line:
 
 ```sh
-epevermodbus --portname /dev/ttyUSB0 --slaveaddress 1
+epevermodbus --portname /dev/ttyUSB0 --slaveaddress 1 [--baudrate 115200]
 ```
 
 ```sh
-usage: epevermodbus [-h] [--portname PORTNAME] [--slaveaddress SLAVEADDRESS]
+usage: epevermodbus [-h] [--portname PORTNAME] [--slaveaddress SLAVEADDRESS] [--baudrate BAUDRATE]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -66,7 +103,36 @@ optional arguments:
   --baudrate BAUDRATE   Baudrate to communicate with controller (default is 115200)
 ```
 
-Example output
+### Python API
+
+To use the library within your Python code:
+
+```python
+from epevermodbus.driver import EpeverChargeController
+
+# Initialize controller
+controller = EpeverChargeController("/dev/ttyUSB0", 1)
+
+# Read real-time data
+solar_voltage = controller.get_solar_voltage()
+battery_voltage = controller.get_battery_voltage()
+battery_soc = controller.get_battery_state_of_charge()
+
+# Read battery parameters
+battery_type = controller.get_battery_type()
+battery_capacity = controller.get_battery_capacity()
+
+# Configure battery parameters
+controller.set_battery_capacity(100)  # Set capacity to 100Ah
+controller.set_battery_voltage_control_registers(
+    float_charging_voltage=13.6,
+    boost_charging_voltage=14.4
+)
+```
+
+See [driver.py](https://github.com/rosswarren/epevermodbus/blob/main/epevermodbus/driver.py) for all available methods.
+
+## Example Output
 
 ```sh
 Real Time Data
@@ -96,7 +162,6 @@ Maximum battery voltage today: 14.5V
 Minimum battery voltage today: 13.25V
 Device over temperature: False
 
-
 Battery Parameters:
 Rated charging current: 20.0A
 Rated load current: 20.0A
@@ -125,17 +190,75 @@ Battery charge: 100%
 Charging mode: VOLTAGE_COMPENSATION
 ```
 
-## Python usage
+## Troubleshooting Guide
 
-To use the library within your Python code
+### Common Issues
 
-```python
-from epevermodbus.driver import EpeverChargeController
+1. Connection Problems
+   * Check cable connections
+   * Verify port name (/dev/ttyUSB0 or /dev/ttyXRUSB0)
+   * Confirm baudrate settings
+   * Check slave address (default: 1)
 
+2. Communication Errors
+   * Verify cable integrity
+   * Check for interference sources
+   * Confirm controller is powered
+   * Try reducing baudrate
 
-controller = EpeverChargeController("/dev/ttyUSB0", 1)
+3. Data Reading Issues
+   * Check controller power
+   * Verify register addresses
+   * Confirm data scaling factors
 
-controller.get_solar_voltage()
+### Error Handling
+The library implements automatic retry mechanisms for common communication issues:
+* 5 retry attempts with 200ms delay
+* Automatic error recovery
+* Comprehensive error reporting
+
+## Development
+
+### Testing
+```bash
+python -m unittest discover test
 ```
 
-See https://github.com/rosswarren/epevermodbus/blob/main/epevermodbus/driver.py for all available methods
+### Contributing
+1. Fork the repository
+2. Create a feature branch
+3. Implement changes with tests
+4. Submit pull request
+
+### Code Style
+* Follow PEP 8 guidelines
+* Include docstrings for new methods
+* Add unit tests for new features
+
+## Technical Notes
+
+### Register Map
+* 0x3100-0x311F: Real-time data
+* 0x3200-0x321F: Status information
+* 0x9000-0x900F: Battery parameters
+* Full register map in driver.py
+
+### Communication Protocol
+* Modbus RTU
+* Default: 115200 baud, 8N1
+* Slave addresses: 1-247
+* Automatic retry on failure
+
+## Security Considerations
+* No authentication in Modbus protocol
+* Secure physical access to controller
+* Use in trusted networks only
+* Monitor for unexpected parameter changes
+
+## License
+MIT License - See LICENSE file for details
+
+## Support
+* GitHub Issues: [Project Issues](https://github.com/rosswarren/epevermodbus/issues)
+* Documentation: See inline code documentation
+* Examples: Check examples/ directory
