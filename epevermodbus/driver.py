@@ -102,8 +102,16 @@ class EpeverChargeController(minimalmodbus.Instrument):
         """Battery voltage"""
         return self.retriable_read_register(0x331A, 2, 4)
 
-    def get_battery_power(self):
-        """Battery power in watts"""
+    def get_charging_voltage(self):
+        """Battery charging voltage in volts"""
+        return self.retriable_read_register(0x3104, 2, 4)
+
+    def get_charging_current(self):
+        """Battery charging current in amps"""
+        return self.retriable_read_register(0x3105, 2, 4)
+
+    def get_charging_power(self):
+        """Battery charging power in watts"""
         return self.retriable_read_long(0x3106, 4) / 100
 
     def get_battery_state_of_charge(self):
@@ -121,6 +129,10 @@ class EpeverChargeController(minimalmodbus.Instrument):
     def get_controller_temperature(self):
         """Temperature inside equipment"""
         return self.retriable_read_register(0x3111, 2, 4, signed=True)
+
+    def get_power_temperature(self):
+        """Heat sink surface temperature of equipments' power components"""
+        return self.retriable_read_register(0x3112, 2, 4, signed=True)
 
     def get_battery_status(self):
         """Battery status"""
@@ -287,6 +299,29 @@ class EpeverChargeController(minimalmodbus.Instrument):
             12: "LI_NICOMN_O2",
         }[self.retriable_read_register(0x9000, 0, 3)]
 
+    def set_battery_type(self, battery_type: str):
+        """Set Battery rated voltage"""
+        battery_types = {
+            "USER_DEFINED": 0,
+            "SEALED":       1,
+            "GEL":          2,
+            "FLOODED":      3,
+            #"LIFEPO4":      4, # Need to determine the "correct" names for these battery types
+            #"LIFEPO4":      5,
+            #"LIFEPO4":      6,
+            #"LIFEPO4":      7,
+            #"LI_NICOMN_O2": 8,
+            #"LI_NICOMN_O2": 9,
+            #"LI_NICOMN_O2": 10,
+            #"LI_NICOMN_O2": 11,
+            #"LI_NICOMN_O2": 12,
+        }
+        if not battery_type in battery_types:
+            raise TypeError(
+                "set_battery_type() got an unexpected or unsupported battery type argument"
+            )
+        return self.write_register(0x9000, battery_types[battery_type])
+
     def get_battery_capacity(self):
         """Battery capacity in amp hours"""
         return self.retriable_read_register(0x9001, 0, 3)
@@ -419,6 +454,26 @@ class EpeverChargeController(minimalmodbus.Instrument):
             8: "220V",
             9: "240V",
         }[self.retriable_read_register(0x9067, 0, 3)]
+
+    def set_battery_rated_voltage(self, rated_voltage: str):
+        """Set Battery rated voltage"""
+        voltage_values = {
+            "AUTO": 0,
+            "12V":  1,
+            "24V":  2,
+            "36V":  3,
+            "48V":  4,
+            "60V":  5,
+            "110V": 6,
+            "120V": 7,
+            "220V": 8,
+            "240V": 9,
+        }
+        if not rated_voltage in voltage_values:
+            raise TypeError(
+                "set_battery_rated_voltage() got an unexpected rated voltage argument"
+            )
+        return self.write_register(0x9067, voltage_values[rated_voltage])
 
     def get_default_load_on_off_in_manual_mode(self):
         """Default load On/Off in manual mode"""
