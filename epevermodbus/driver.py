@@ -104,11 +104,11 @@ class EpeverChargeController(minimalmodbus.Instrument):
 
     def get_charging_voltage(self):
         """Battery charging voltage in volts"""
-        return self.retriable_read_long(0x3104, 4) / 100
+        return self.retriable_read_register(0x3104, 2, 4)
 
     def get_charging_current(self):
         """Battery charging current in amps"""
-        return self.retriable_read_long(0x3105, 4) / 100
+        return self.retriable_read_register(0x3105, 2, 4)
 
     def get_charging_power(self):
         """Battery charging power in watts"""
